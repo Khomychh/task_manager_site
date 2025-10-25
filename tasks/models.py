@@ -1,5 +1,10 @@
 from django.db import models
 
+
+class TaskType(models.Model):
+    name = models.CharField(max_length=100)
+
+
 class Task(models.Model):
     class Priority(models.TextChoices):
         URGENT = "URGENT", "Urgent"
@@ -16,3 +21,4 @@ class Task(models.Model):
         choices=Priority.choices,
         default=Priority.MEDIUM
     )
+    task_type = models.ForeignKey("TaskType", on_delete=models.CASCADE)
