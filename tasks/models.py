@@ -43,7 +43,10 @@ class TaskType(models.Model):
 
 
 class Position(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(
+        blank=True, default="This position has no description."
+    )
 
     class Meta:
         ordering = ["name"]
