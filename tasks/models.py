@@ -10,6 +10,10 @@ class Worker(AbstractUser):
         null=True,
         blank=True,
     )
+    team = models.ManyToManyField(
+        "Team",
+        related_name="workers",
+    )
 
     class Meta:
         ordering = ["username"]
@@ -53,6 +57,17 @@ class Position(models.Model):
     description = models.TextField(
         blank=True, default="This position has no description."
     )
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["name"]
