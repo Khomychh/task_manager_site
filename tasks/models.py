@@ -32,7 +32,11 @@ class Task(models.Model):
     priority = models.CharField(
         max_length=10, choices=Priority.choices, default=Priority.MEDIUM
     )
-    task_type = models.ForeignKey("TaskType", on_delete=models.CASCADE)
+    type = models.ForeignKey(
+        "TaskType",
+        on_delete=models.CASCADE,
+        related_name="tasks"
+    )
 
     def __str__(self):
         return self.name
