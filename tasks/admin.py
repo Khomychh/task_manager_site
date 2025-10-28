@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from tasks.models import Task, Worker, Position, Team, Project
+from tasks.models import Task, Worker, Position, Team, Project, TaskType
 
 
 @admin.register(Worker)
@@ -10,6 +10,11 @@ class WorkerAdmin(admin.ModelAdmin):
 
 @admin.register(Task)
 class TaskAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(TaskType)
+class TaskTypeAdmin(admin.ModelAdmin):
     pass
 
 
