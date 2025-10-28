@@ -74,3 +74,29 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(
+        blank=True, default=""
+    )
+    deadline = models.DateTimeField()
+    is_completed = models.BooleanField(default=False)
+    teams = models.ManyToManyField(
+        "Team",
+        related_name="projects",
+    )
+    workers = models.ForeignKey(
+        "Worker",
+        on_delete=models.SET_NULL,
+        related_name="projects",
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
