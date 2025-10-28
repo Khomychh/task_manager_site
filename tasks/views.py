@@ -1,6 +1,5 @@
-from multiprocessing.pool import worker
-
 from django.shortcuts import render
+from django.views import generic
 
 from tasks.models import Task, Worker, Project
 
@@ -16,3 +15,7 @@ def index(request):
         "worker_count": worker_count,
     }
     return render(request, "index.html", context=context)
+
+
+class TasksListView(generic.ListView):
+    model = Task

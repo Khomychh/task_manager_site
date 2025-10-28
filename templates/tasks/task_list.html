@@ -1,0 +1,126 @@
+{% extends "layouts/base_sections.html" %}
+
+{% load static %}
+
+{% block icon %}
+  <link rel="icon" type="image/png" href="{% static 'img/tasks_1.png' %}">
+{% endblock %}
+
+{% block title %}
+  <title>
+    Tasks
+  </title>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid py-4" style="margin-top: 90px">
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header pb-0">
+            <h6>Tasks</h6>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            {% if task_list_ %}
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Type</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Priority</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for task in task_list %}
+                      <tr>
+                        <td>
+                          <a href="#" class="text-reset text-decoration-none">
+                            <div class="d-flex px-2 py-1">
+                              <div>
+                                <img src="{% static "img/tasks_1.png " %}" class="avatar avatar-sm me-3" alt="user1">
+                              </div>
+                              <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">{{ task.name }}</h6>
+                              </div>
+                            </div>
+                          </a>
+                        </td>
+
+                        <td>
+                          <p class="text-xs font-weight-bold mb-0">{{ task.type }}</p>
+                        </td>
+
+                        <td class="align-middle text-center text-sm">
+                          {% if task.priority == "URGENT" %}
+                            <span class="badge badge-sm bg-gradient-danger">Urgent</span>
+                          {% elif task.priority == "HIGH" %}
+                            <span class="badge badge-sm bg-gradient-warning">High</span>
+                          {% elif task.priority == "MEDIUM" %}
+                            <span class="badge badge-sm bg-gradient-light text-dark">Medium</span>
+                          {% elif task.priority == "LOW" %}
+                            <span class="badge badge-sm bg-gradient-success">Low</span>
+                          {% endif %}
+                        </td>
+
+                        {% if task.is_completed %}
+                          <td class="align-middle text-center text-sm">
+                            <span class="badge badge-sm bg-gradient-success">Completed</span>
+                          </td>
+                        {% else %}
+                          <td class="align-middle text-center text-sm">
+                            <span class="badge badge-sm bg-gradient-secondary">Uncompleted</span>
+                          </td>
+                        {% endif %}
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{ task.deadline }}</span>
+                        </td>
+
+                        <td class="align-middle">
+                          <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            Edit
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <a href="#" class="text-reset text-decoration-none">
+                <div class="d-flex align-items-center justify-content-center py-6">
+                <div class="text-center p-5 empty-state">
+                  <div class="empty-illustration mb-3" aria-hidden="true">
+                    <svg viewBox="0 0 96 96" width="88" height="88">
+                      <defs>
+                        <linearGradient id="g" x1="0" x2="1">
+                          <stop offset="0" stop-color="#5e72e4"/>
+                          <stop offset="1" stop-color="#825ee4"/>
+                        </linearGradient>
+                      </defs>
+                      <rect x="12" y="14" rx="12" ry="12" width="72" height="68" fill="url(#g)" opacity=".15"/>
+                      <rect x="22" y="24" rx="8" ry="8" width="52" height="48" fill="url(#g)" opacity=".22"/>
+                      <path d="M30 40h36M30 52h24" stroke="#6c63ff" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+                      <circle cx="72" cy="68" r="6" fill="#6c63ff" opacity=".65"/>
+                      <circle cx="24" cy="68" r="6" fill="#6c63ff" opacity=".25"/>
+                    </svg>
+                  </div>
+
+                  <h5 class="mb-1">It's empty here for now</h5>
+                  <p class="text-secondary mb-4">
+                    Create your first task
+                  </p>
+                </div>
+              </div>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

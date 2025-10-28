@@ -1,0 +1,20 @@
+/* My style */
+.empty-state{
+    border: 0 solid rgba(0,0,0,.08);
+    border-radius: 1rem;
+    background:
+      radial-gradient(1200px 300px at 50% -50%, rgba(130,94,228,.08), transparent 60%),
+      #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,.04);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+.empty-state:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.06);
+}
+.empty-illustration svg{
+    display:block; margin: 0 auto;
+}
+@media (prefers-reduced-motion: reduce){
+    .empty-state, .empty-state:hover{ transition: none; transform: none; }
+}

@@ -44,6 +44,7 @@ class Task(models.Model):
 
 class TaskType(models.Model):
     name = models.CharField(max_length=100)
+    # можна добавити зображення для типу завдання
 
     class Meta:
         ordering = ["name"]

@@ -20,7 +20,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/apple-icon.png' %}">
-<link rel="icon" type="image/png" href="{% static 'img/head_icon_1.png' %}">
+
+{% block icon %}
+  <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+{% endblock %}
 
 {% block title %}
     <title>
@@ -40,6 +43,7 @@
 
 <!-- CSS Files -->
 <link id="pagestyle" href="{% static 'css/soft-design-system.css' %}" rel="stylesheet" />
+<link href="{% static 'css/my_style.css' %}" rel="stylesheet">
 </head>
 
 <body {% block body %}{% endblock body %} >
