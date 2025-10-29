@@ -19,13 +19,16 @@
       <div class="col-12">
         <div class="card mb-4">
           <div class="card-header pb-0">
-            <div  class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2">
-              <h6>Tasks</h6>
-              <form action="" method="get" class="d-flex flex-row flex-wrap align-items-center gap-2 w-100 w-md-auto ms-md-auto
+            <div  class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2">
+              <h5>Tasks</h5>
+              <form action="" method="get" class="d-flex flex-row flex-wrap align-items-center gap-2 w-100 w-sm-auto ms-sm-auto
                  bg-white rounded-2 px-2 py-1">
                 {{ search_form|crispy }}
                 <input class="btn bg-gradient-white w-auto me-2" type="submit" value="Search">
               </form>
+              <a class="btn bg-gradient-primary w-auto me-2" href="#">
+                <i class="icon-plus"></i>
+              </a>
             </div>
           </div>
           <div class="card-body px-0 pt-0 pb-2">
@@ -46,7 +49,7 @@
                     {% for task in task_list %}
                       <tr>
                         <td>
-                          <a href="#" class="text-reset text-decoration-none">
+                          <a href="{{ task.get_absolute_url }}" class="text-reset text-decoration-none">
                             <div class="d-flex px-2 py-1">
                               <div>
                                 <img src="{% static "img/tasks_1.png " %}" class="avatar avatar-sm me-3" alt="user1">
