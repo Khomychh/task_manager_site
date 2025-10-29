@@ -20,3 +20,7 @@ def index(request):
 class TasksListView(generic.ListView):
     model = Task
     paginate_by = 2
+
+    def get_queryset(self):
+        queryset = Task.objects.all().select_related("type")
+        return queryset
