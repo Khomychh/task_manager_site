@@ -18,3 +18,4 @@
 @media (prefers-reduced-motion: reduce){
     .empty-state, .empty-state:hover{ transition: none; transform: none; }
 }
+
