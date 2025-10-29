@@ -19,3 +19,4 @@ def index(request):
 
 class TasksListView(generic.ListView):
     model = Task
+    paginate_by = 2

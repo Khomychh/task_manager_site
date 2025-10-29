@@ -33,6 +33,10 @@
 <!--     Fonts and icons     -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
 
+<link href="{% static 'fontello-icons/css/fontello.css' %}" rel="stylesheet" >
+
+<lihk href="{% static 'fontello-icons/css/animation.css' %}" rel="stylesheet" >
+
 <!-- Nucleo Icons -->
 <link href="{% static 'css/nucleo-icons.css' %}" rel="stylesheet" />
 <link href="{% static 'css/nucleo-svg.css' %}" rel="stylesheet" />
@@ -43,6 +47,8 @@
 
 <!-- CSS Files -->
 <link id="pagestyle" href="{% static 'css/soft-design-system.css' %}" rel="stylesheet" />
+
+<!-- My style-->
 <link href="{% static 'css/my_style.css' %}" rel="stylesheet">
 </head>
 
@@ -55,6 +61,10 @@
   {% endblock header %}
 
   {% block content %}{% endblock content %}
+
+  {% block pagination %}
+    {% include "includes/pagination.html" %}
+  {% endblock %}
 
   {% block footer %}
   
