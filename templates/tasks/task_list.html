@@ -89,15 +89,20 @@
                           {% endif %}
                         </td>
 
-                        {% if task.is_completed %}
-                          <td class="align-middle text-center text-sm">
-                            <span class="badge badge-sm bg-gradient-success">Completed</span>
-                          </td>
-                        {% else %}
-                          <td class="align-middle text-center text-sm">
-                            <span class="badge badge-sm bg-gradient-secondary">Uncompleted</span>
-                          </td>
-                        {% endif %}
+                        <td class="align-middle text-center text-sm">
+                          <form method="post" action="{% url 'tasks:toggle-completed' pk=task.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit"
+                                    class="badge badge-sm btn {% if task.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} text-nowrap m-0">
+                              {% if task.is_completed %}
+                                <span>Completed</span>
+                              {% else %}
+                                <span>Uncompleted</span>
+                              {% endif %}
+                            </button>
+                          </form>
+                        </td>
 
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ task.deadline }}</span>
