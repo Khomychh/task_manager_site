@@ -19,6 +19,8 @@
 .icon-right-open:before { content: '\e811'; } /* '' */
 .icon-up-open:before { content: '\e812'; } /* '' */
 .icon-arrows-cw:before { content: '\e813'; } /* '' */
+.icon-check:before { content: '\e814'; } /* '' */
+.icon-check-empty:before { content: '\f096'; } /* '' */
 .icon-menu:before { content: '\f0c9'; } /* '' */
 .icon-list-bullet:before { content: '\f0ca'; } /* '' */
 .icon-angle-double-left:before { content: '\f100'; } /* '' */

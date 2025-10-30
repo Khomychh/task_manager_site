@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
@@ -38,6 +39,18 @@ class Task(models.Model):
         on_delete=models.CASCADE,
         related_name="tasks"
     )
+    project = models.ForeignKey(
+        "Project",
+        on_delete=models.CASCADE,
+        related_name="tasks",
+        null=True,
+        blank=True,
+    )
+    assignees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name="tasks",
+        blank=True,
+    )
 
     def __str__(self):
         return self.name
@@ -71,10 +84,18 @@ class Position(models.Model):
 
 
 class Team(models.Model):
+    """
+    Команда не працює над окремими завданнями,
+    але працює над проєктамм
+    """
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, default="")
     workers = models.ManyToManyField(
         "Worker",
+        related_name="teams",
+    )
+    projects = models.ManyToManyField(
+        "Project",
         related_name="teams",
     )
 
@@ -90,18 +111,23 @@ class Project(models.Model):
     description = models.TextField(
         blank=True, default=""
     )
+
+    # дедлайни завдань, які належать до даного проекту не можуть пізніше дедлайну проекту
+    # Від цього постає питання, що робити, якщо хочеть додати завдання до проекту, дедлайн якого пізніше
     deadline = models.DateTimeField()
     is_completed = models.BooleanField(default=False)
-    teams = models.ManyToManyField(
-        "Team",
-        related_name="projects",
-    )
-    workers = models.ForeignKey(
+
+    # Наступне поле дає можливість ставити лідера проєкту,
+    # а також призначати проєкт одній людині, а не команді.
+    # Також дає можливість, щоб над проєктом працювало декілька команд
+
+    # Лідер проєкту є лідером команди, хоча це можна реалізувати
+    leader = models.ForeignKey(
         "Worker",
         on_delete=models.SET_NULL,
         related_name="projects",
-        blank=True,
         null=True,
+        blank=True,
     )
 
     class Meta:

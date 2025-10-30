@@ -1,1 +1,105 @@
 {% extends "layouts/base_sections.html" %}
+
+{% block title %}
+  <title>
+    {{ task.name }}
+  </title>
+{% endblock %}
+
+{% block content %}
+<section class="my-5 py-5">
+  <div class="container">
+    <div class="row pt-lg-6">
+      <div class="col-lg-4">
+        <div class="sticky-top">
+          <div>
+            <div class="card-body">
+              <h5 class="card-title mb-2">{{ task.name }}</h5>
+
+              {# Deadline #}
+              <ul class="list-unstyled mb-0">
+                <li class="d-flex align-items-center mb-2">
+                  <i class="icon-calendar me-2"></i>
+                  <span class="badge text-dark border">
+                    {{ task.deadline|date:"M d, Y — H:i" }}
+                  </span>
+                </li>
+
+                {# Priority #}
+                <li class="d-flex align-items-center mb-2">
+                  <span class="me-2">Priority:</span>
+                  {% if task.priority == 'URGENT' %}
+                    <span class="badge badge-sm bg-gradient-danger">Urgent</span>
+                  {% elif task.priority == 'HIGH' %}
+                    <span class="badge bg-warning text-dark">High</span>
+                  {% elif task.priority == 'MEDIUM' %}
+                    <span class="badge badge-sm bg-gradient-light text-dark">Medium</span>
+                  {% elif task.priority == 'LOW' %}
+                    <span class="badge badge-sm bg-gradient-success">Low</span>
+                  {% endif %}
+                </li>
+
+                {# Type #}
+                <li class="d-flex align-items-center">
+                  <span class="me-2">Type:</span>
+                  <span class="badge bg-primary-subtle text-dark">
+                    {{ task.type }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
+
+              {# Start block #}
+              <div class="container">
+                <div class="row justify-space-between py-2">
+                  <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
+                    <p class="lead text-dark pt-1 mb-0">Description</p>
+                  </div>
+                  <div class="col-lg-4 col-md-5 col-sm-6 ">
+                    <div class="d-inline-block w-100">
+                      {# Кнопка зміни статусу завдання #}
+                    <form method="post" action="{% url 'tasks:toggle-completed' pk=task.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="btn btn-sm {% if task.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} w-100 text-nowrap">
+                        {% if task.is_completed %}
+                          Mark as incomplete
+                        {% else %}
+                          Mark as done
+                        {% endif %}
+                      </button>
+                    </form>
+
+                    </div>
+
+
+                  </div>
+                </div>
+              </div>
+
+              {# Content #}
+              <div class="tab-content tab-space">
+                {# block preview #}
+                <div class="tab-pane active" id="preview-typo">
+                  <div class="position-relative p-4">
+                    {{ task.description }}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

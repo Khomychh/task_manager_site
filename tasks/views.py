@@ -1,4 +1,6 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import generic
 
 from tasks.forms import TaskSearchForm
@@ -40,3 +42,13 @@ class TasksListView(generic.ListView):
 
 class TaskDetailView(generic.DetailView):
     model = Task
+
+def toggle_completed(request, pk: int):
+    task = Task.objects.get(id=pk)
+    if task:
+        if task.is_completed:
+            task.is_completed = False
+        else:
+            task.is_completed = True
+        task.save()
+    return HttpResponseRedirect(reverse_lazy("tasks:task-detail", args=[pk]))
