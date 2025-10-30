@@ -26,7 +26,8 @@
                 {{ search_form|crispy }}
                 <input class="btn bg-gradient-white w-auto me-2" type="submit" value="Search">
               </form>
-              <a class="btn bg-gradient-primary w-auto me-2" href="#">
+              <a href="{% url 'tasks:task-create' %}"
+                 class="btn bg-gradient-primary w-auto me-2">
                 <i class="icon-plus"></i>
               </a>
             </div>
@@ -113,7 +114,7 @@
                 </table>
               </div>
             {% else %}
-              <a href="#" class="text-reset text-decoration-none">
+              <a href="{% url 'tasks:task-create' %}" class="text-reset text-decoration-none">
                 <div class="d-flex align-items-center justify-content-center py-6">
                 <div class="text-center p-5 empty-state">
                   <div class="empty-illustration mb-3" aria-hidden="true">

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tasks.forms import TaskSearchForm
+from tasks.forms import TaskSearchForm, TaskCreateForm
 from tasks.models import Task, Worker, Project
 
 
@@ -51,6 +51,12 @@ class TaskDetailView(generic.DetailView):
         if self.object:
             context["assignees"] = self.object.assignees.all()
         return context
+
+
+class TasksCreateView(generic.CreateView):
+    model = Task
+    form_class = TaskCreateForm
+    success_url = reverse_lazy("tasks:task-list")
 
 
 def toggle_completed(request, pk: int):
