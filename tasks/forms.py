@@ -38,3 +38,8 @@ class TaskCreateForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"placeholder": "Description"}),
             "assignees": forms.CheckboxSelectMultiple,
         }
+
+
+class TaskUpdateForm(TaskCreateForm, forms.ModelForm):
+    class Meta(TaskCreateForm.Meta):
+        fields = ("is_completed",) + TaskCreateForm.Meta.fields

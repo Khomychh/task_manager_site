@@ -104,7 +104,7 @@
               </div>
 
               {# Кнопка посилання change #}
-              <a href="#"
+              <a href="{% url 'tasks:task-update' pk=task.id %}"
                  class="btn btn-sm bg-gradient-primary w-100 text-nowrap">
                 Change
               </a>

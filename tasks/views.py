@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tasks.forms import TaskSearchForm, TaskCreateForm
+from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm
 from tasks.models import Task, Worker, Project
 
 
@@ -20,12 +20,12 @@ def index(request):
     return render(request, "index.html", context=context)
 
 
-class TasksListView(generic.ListView):
+class TaskListView(generic.ListView):
     model = Task
     paginate_by = 2
 
     def get_context_data(self, **kwargs):
-        context = super(TasksListView, self).get_context_data(**kwargs)
+        context = super(TaskListView, self).get_context_data(**kwargs)
         name = self.request.GET.get("name", "")
         context["search_form"] = TaskSearchForm(
             initial={"name": name}
@@ -53,10 +53,15 @@ class TaskDetailView(generic.DetailView):
         return context
 
 
-class TasksCreateView(generic.CreateView):
+class TaskCreateView(generic.CreateView):
     model = Task
     form_class = TaskCreateForm
     success_url = reverse_lazy("tasks:task-list")
+
+
+class TaskUpdateView(generic.UpdateView):
+    model = Task
+    form_class = TaskUpdateForm
 
 
 def toggle_completed(request, pk: int):
