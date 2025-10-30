@@ -64,6 +64,11 @@ class TaskUpdateView(generic.UpdateView):
     form_class = TaskUpdateForm
 
 
+class TaskDeleteView(generic.DeleteView):
+    model = Task
+    success_url = reverse_lazy("tasks:tasks")
+
+
 def toggle_completed(request, pk: int):
     task = Task.objects.get(id=pk)
     if task:

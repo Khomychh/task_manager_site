@@ -109,6 +109,12 @@
                  class="btn btn-sm bg-gradient-primary w-100 text-nowrap">
                 Change
               </a>
+
+              {# Кнопка видалення #}
+              <a href="{% url 'tasks:task-delete' pk=task.id %}"
+                 class="btn btn-sm bg-gradient-danger w-100 text-nowrap">
+                Delete
+              </a>
             </div>
           </div>
         </div>
