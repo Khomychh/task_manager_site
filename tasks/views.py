@@ -33,7 +33,7 @@ class TasksListView(generic.ListView):
         return context
 
     def get_queryset(self):
-        queryset = Task.objects.all().select_related("type")
+        queryset = Task.objects.all().select_related("type", "project")
         name = self.request.GET.get("name", "")
         if name:
             queryset = queryset.filter(name__icontains=name)
