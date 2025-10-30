@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -72,4 +72,8 @@ def toggle_completed(request, pk: int):
         else:
             task.is_completed = True
         task.save()
-    return HttpResponseRedirect(reverse_lazy("tasks:task-detail", args=[pk]))
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if not next_url:
+        next_url = request.META.get("HTTP_REFERER")
+
+    return redirect(next_url)
