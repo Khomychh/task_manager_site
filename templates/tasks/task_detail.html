@@ -92,6 +92,7 @@
               <div class="d-inline-block w-100">
                 <form method="post" action="{% url 'tasks:toggle-completed' pk=task.id %}" class="d-inline">
                   {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
                   <button type="submit"
                           class="btn btn-sm {% if task.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} w-100 text-nowrap">
                     {% if task.is_completed %}
