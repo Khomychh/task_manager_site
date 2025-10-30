@@ -42,6 +42,16 @@ class TasksListView(generic.ListView):
 
 class TaskDetailView(generic.DetailView):
     model = Task
+    context_object_name = "task"
+    queryset = Task.objects.all().select_related(
+        "type", "project").prefetch_related("assignees")
+
+    def get_context_data(self, **kwargs):
+        context = super(TaskDetailView, self).get_context_data(**kwargs)
+        if self.object:
+            context["assignees"] = self.object.assignees.all()
+        return context
+
 
 def toggle_completed(request, pk: int):
     task = Task.objects.get(id=pk)

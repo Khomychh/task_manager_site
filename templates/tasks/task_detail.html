@@ -11,47 +11,109 @@
   <div class="container">
     <div class="row pt-lg-6">
       <div class="col-lg-4">
-        <div class="sticky-top">
-          <div>
-            <div class="card-body">
-              <h5 class="card-title mb-2">{{ task.name }}</h5>
+        <div class="sticky-top mt-3" style="top: 90px">
+          <div class="card-body card border-0 shadow-sm overflow-hidden">
+
+            {# Name #}
+            <h3 class="card-title mb-2">{{ task.name }}</h3>
+
+            <ul class="list-unstyled mb-0">
 
               {# Deadline #}
-              <ul class="list-unstyled mb-0">
-                <li class="d-flex align-items-center mb-2">
-                  <i class="icon-calendar me-2"></i>
-                  <span class="badge text-dark border">
-                    {{ task.deadline|date:"M d, Y — H:i" }}
-                  </span>
-                </li>
+              <li class="d-flex align-items-center mb-2">
+                <i class="icon-calendar me-2"></i>
+                <span class="badge text-dark border">
+                  {{ task.deadline|date:"M d, Y — H:i" }}
+                </span>
+              </li>
 
-                {# Priority #}
-                <li class="d-flex align-items-center mb-2">
-                  <span class="me-2">Priority:</span>
-                  {% if task.priority == 'URGENT' %}
-                    <span class="badge badge-sm bg-gradient-danger">Urgent</span>
-                  {% elif task.priority == 'HIGH' %}
-                    <span class="badge bg-warning text-dark">High</span>
-                  {% elif task.priority == 'MEDIUM' %}
-                    <span class="badge badge-sm bg-gradient-light text-dark">Medium</span>
-                  {% elif task.priority == 'LOW' %}
-                    <span class="badge badge-sm bg-gradient-success">Low</span>
-                  {% endif %}
-                </li>
-
-                {# Type #}
-                <li class="d-flex align-items-center">
-                  <span class="me-2">Type:</span>
+              {# Project #}
+              <li class="d-flex align-items-center">
+                <a href="#" class="text-reset text-decoration-none">
+                  <span class="me-2">Project:</span>
                   <span class="badge bg-primary-subtle text-dark">
-                    {{ task.type }}
+                    {% if task.project %}
+                      {{ task.project.name }}
+                    {% else %}
+                      Not part of the project
+                    {% endif %}
                   </span>
-                </li>
+                  </a>
+              </li>
+
+              {# Priority #}
+              <li class="d-flex align-items-center mb-2">
+                <span class="me-2">Priority:</span>
+                {% if task.priority == 'URGENT' %}
+                  <span class="badge badge-sm bg-gradient-danger">Urgent</span>
+                {% elif task.priority == 'HIGH' %}
+                  <span class="badge bg-warning text-dark">High</span>
+                {% elif task.priority == 'MEDIUM' %}
+                  <span class="badge badge-sm bg-gradient-light text-dark">Medium</span>
+                {% elif task.priority == 'LOW' %}
+                  <span class="badge badge-sm bg-gradient-success">Low</span>
+                {% endif %}
+              </li>
+
+              {# Type #}
+              <li class="d-flex align-items-center">
+                <span class="me-2">Type:</span>
+                <span class="badge bg-primary-subtle text-dark">
+                  {{ task.type }}
+                </span>
+              </li>
+            </ul>
+
+            {# Assigness #}
+            {% if assignees %}
+              <h5 class="card-title mb-2">Assigness:</h5>
+              <ul class="list-unstyled mb-0">
+                {% for worker in assignees %}
+                  <li class="d-flex align-items-center mb-2">
+                    <a href="#" class="text-reset text-decoration-none">
+                      <i class="icon-user"></i>
+                      <span class="bg-primary-subtle text-dark">
+                        {{ worker.username }}
+                      </span>
+                    </a>
+                  </li>
+                {% endfor %}
               </ul>
+            {% else %}
+              <h5 class="card-title mb-2">Assigness:</h5>
+              <div class="d-inline-block">
+                <i class="icon-user"></i>
+                <span class="bg-primary-subtle text-dark">No workers</span>
+              </div>
+            {% endif %}
+
+            <div class="pt-4">
+              {# Кнопка зміни статусу завдання #}
+              <div class="d-inline-block w-100">
+                <form method="post" action="{% url 'tasks:toggle-completed' pk=task.id %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="btn btn-sm {% if task.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} w-100 text-nowrap">
+                    {% if task.is_completed %}
+                      Mark as incomplete
+                    {% else %}
+                      Mark as done
+                    {% endif %}
+                  </button>
+                </form>
+              </div>
+
+              {# Кнопка посилання change #}
+              <a href="#"
+                 class="btn btn-sm bg-gradient-primary w-100 text-nowrap">
+                Change
+              </a>
             </div>
           </div>
         </div>
       </div>
 
+      {# block description #}
       <div class="col-lg-8">
         <div class="row mt-3">
           <div class="col-12">
@@ -63,25 +125,6 @@
                   <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
                     <p class="lead text-dark pt-1 mb-0">Description</p>
                   </div>
-                  <div class="col-lg-4 col-md-5 col-sm-6 ">
-                    <div class="d-inline-block w-100">
-                      {# Кнопка зміни статусу завдання #}
-                    <form method="post" action="{% url 'tasks:toggle-completed' pk=task.id %}" class="d-inline">
-                      {% csrf_token %}
-                      <button type="submit"
-                              class="btn btn-sm {% if task.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} w-100 text-nowrap">
-                        {% if task.is_completed %}
-                          Mark as incomplete
-                        {% else %}
-                          Mark as done
-                        {% endif %}
-                      </button>
-                    </form>
-
-                    </div>
-
-
-                  </div>
                 </div>
               </div>
 
@@ -90,11 +133,14 @@
                 {# block preview #}
                 <div class="tab-pane active" id="preview-typo">
                   <div class="position-relative p-4">
-                    {{ task.description }}
+                    {% if task.description %}
+                      {{ task.description }}
+                    {% else %}
+                      There is no description for this task.
+                    {% endif %}
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

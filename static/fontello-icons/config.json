@@ -209,6 +209,18 @@
       "css": "check-empty",
       "code": 61590,
       "src": "fontawesome"
+    },
+    {
+      "uid": "861ab06e455e2de3232ebef67d60d708",
+      "css": "minus",
+      "code": 59413,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "2626e3a1bbcd90e45849af3b58a1d594",
+      "css": "trash-1",
+      "code": 59414,
+      "src": "entypo"
     }
   ]
 }
