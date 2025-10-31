@@ -63,7 +63,9 @@
                         </td>
 
                         <td>
-                          <p class="text-xs font-weight-bold mb-0">{{ task.type }}</p>
+                          <a href="{% url 'tasks:task-type-detail' pk=task.type.id %}" class="text-reset text-decoration-none">
+                            <p class="text-xs font-weight-bold mb-0">{{ task.type }}</p>
+                          </a>
                         </td>
 
                         <td>
