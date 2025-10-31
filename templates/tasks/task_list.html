@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid py-4" style="margin-top: 90px">
+  <div class="container py-4" style="margin-top: 90px">
     <div class="row">
       <div class="col-12">
         <div class="card mb-4">
@@ -44,7 +44,6 @@
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Priority</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
-                      <th class="text-secondary opacity-7"></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -106,12 +105,6 @@
 
                         <td class="align-middle text-center">
                           <span class="text-secondary text-xs font-weight-bold">{{ task.deadline }}</span>
-                        </td>
-
-                        <td class="align-middle">
-                          <a href="{% url 'tasks:task-update' pk=task.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                            Edit
-                          </a>
                         </td>
                       </tr>
                     {% endfor %}
