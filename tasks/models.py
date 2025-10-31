@@ -12,12 +12,31 @@ class Worker(AbstractUser):
         null=True,
         blank=True,
     )
+    full_name = models.CharField(
+        max_length=150,
+        editable=False,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         ordering = ["username"]
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name} ({self.position})"
+        return self.full_name
+
+    def create_full_name(self):
+        parts = [self.last_name, self.first_name]
+        cleaned = [p.strip() for p in parts]
+        return " ".join(cleaned)
+
+    def save(self, *args, **kwargs):
+        self.full_name = self.create_full_name()
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("tasks:worker-detail", kwargs={"pk": self.pk})
 
 
 class Task(models.Model):
