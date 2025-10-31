@@ -61,6 +61,7 @@ class Task(models.Model):
 
 class TaskType(models.Model):
     name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, default="")
     # можна добавити зображення для типу завдання
 
     class Meta:
@@ -68,6 +69,9 @@ class TaskType(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("tasks:task-type-detail", kwargs={"pk": self.pk})
 
 
 class Position(models.Model):
