@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm
-from tasks.models import Task, Worker, Project
+from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm
+from tasks.models import Task, Worker, Project, TaskType
 
 
 def index(request):
@@ -22,7 +22,7 @@ def index(request):
 
 class TaskListView(generic.ListView):
     model = Task
-    paginate_by = 2
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
@@ -42,7 +42,6 @@ class TaskListView(generic.ListView):
 
 class TaskDetailView(generic.DetailView):
     model = Task
-    context_object_name = "task"
     queryset = Task.objects.all().select_related(
         "type", "project").prefetch_related("assignees")
 
@@ -82,3 +81,60 @@ def toggle_completed(request, pk: int):
         next_url = request.META.get("HTTP_REFERER")
 
     return redirect(next_url)
+
+
+class TaskTypeListView(generic.ListView):
+    model = TaskType
+    template_name = "tasks/task_type_list.html"
+    context_object_name = "task_type_list"
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(TaskTypeListView, self).get_context_data(**kwargs)
+        name = self.request.GET.get("name", "")
+        context["search_form"] = TaskTypeSearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = TaskType.objects.all()
+        name = self.request.GET.get("name", "")
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
+
+class TaskTypeDetailView(generic.DetailView):
+    model = TaskType
+    template_name = "tasks/task_type_detail.html"
+    context_object_name = "task_type"
+    queryset = TaskType.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(TaskTypeDetailView, self).get_context_data(**kwargs)
+        tasks_count = self.object.tasks.count()
+        task_list = self.object.tasks.all()
+        context["tasks_count"] = tasks_count
+        context["task_list"] = task_list
+        return context
+
+
+class TaskTypeCreateView(generic.CreateView):
+    model = TaskType
+    form_class = TaskTypeCreateForm
+    template_name = "tasks/task_type_form.html"
+    success_url = reverse_lazy("tasks:task-type-list")
+
+
+class TaskTypeUpdateView(generic.UpdateView):
+    model = TaskType
+    form_class = TaskTypeCreateForm
+    template_name = "tasks/task_type_form.html"
+    success_url = reverse_lazy("tasks:task-type-detail")
+
+
+class TaskTypeDeleteView(generic.DeleteView):
+    model = TaskType
+    template_name = "tasks/task_type_confirm_delete.html"
+    context_object_name = "task_type"
+    success_url = reverse_lazy("tasks:task-type-list")
