@@ -1,6 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.core.exceptions import ValidationError
 
 from tasks.models import Task, TaskType, Worker
 
@@ -81,7 +82,7 @@ class WorkerSearchForm(forms.Form):
 
 class WorkerCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
-        model = Worker
+        model = get_user_model()
         fields = UserCreationForm.Meta.fields + ("last_name", "first_name", "email", "position")
         labels = {
             "username": "",
