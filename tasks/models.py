@@ -27,12 +27,18 @@ class Worker(AbstractUser):
         null=True,
         blank=True,
     )
+    biography = models.TextField(
+        blank=True,
+        default="",
+    )
 
     class Meta:
         ordering = ["username"]
 
     def __str__(self):
-        return self.full_name
+        if self.full_name:
+            return self.full_name
+        return self.username
 
     def create_full_name(self):
         parts = [self.last_name, self.first_name]
