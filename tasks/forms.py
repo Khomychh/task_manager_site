@@ -1,6 +1,8 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
-from tasks.models import Task, TaskType
+from tasks.models import Task, TaskType, Worker
 
 
 class TaskSearchForm(forms.Form):
@@ -63,4 +65,34 @@ class TaskTypeCreateForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "description": forms.Textarea(attrs={"placeholder": "Description"}),
+        }
+
+
+class WorkerSearchForm(forms.Form):
+    full_name = forms.CharField(
+        max_length=150,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={"placeholder": "Full name"}
+        )
+    )
+
+
+class WorkerCreationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = Worker
+        fields = UserCreationForm.Meta.fields + ("last_name", "first_name", "email", "position")
+        labels = {
+            "username": "",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+        }
+        widgets = {
+            "username": forms.TextInput(attrs={"placeholder": "Username*"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "Last name*"}),
+            "first_name": forms.TextInput(attrs={"placeholder": "First name*"}),
+            "email": forms.TextInput(attrs={"placeholder": "Email"}),
+
         }

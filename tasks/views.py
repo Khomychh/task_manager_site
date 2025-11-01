@@ -3,14 +3,15 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 
-from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm
+from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm, \
+    WorkerSearchForm, WorkerCreationForm
 from tasks.models import Task, Worker, Project, TaskType
 
 
 def index(request):
     tasks_count = Task.objects.count()
-    project_count = Project.objects.all()
-    worker_count = Worker.objects.all()
+    project_count = Project.objects.all().count()
+    worker_count = Worker.objects.all().count()
 
     context = {
         "tasks_count": tasks_count,
@@ -138,3 +139,57 @@ class TaskTypeDeleteView(generic.DeleteView):
     template_name = "tasks/task_type_confirm_delete.html"
     context_object_name = "task_type"
     success_url = reverse_lazy("tasks:task-type-list")
+
+
+class WorkerListView(generic.ListView):
+    model = Worker
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkerListView, self).get_context_data(**kwargs)
+        full_name = self.request.GET.get("full_name", "")
+        context["search_form"] = WorkerSearchForm(
+            initial={"full_name": full_name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Worker.objects.all().select_related("position")
+        full_name = self.request.GET.get("full_name", "")
+        if full_name:
+            queryset = queryset.filter(name__icontains=full_name)
+        return queryset
+
+
+class WorkerDetailView(generic.DetailView):
+    model = Worker
+    queryset = Worker.objects.all().select_related("position")
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkerDetailView, self).get_context_data(**kwargs)
+        projects = self.object.projects.all()
+        tasks = self.object.tasks.all()
+        teams = self.object.teams.all()
+        if projects:
+            context["projects"] = projects
+        if tasks:
+            context["tasks"] = tasks
+        if teams:
+            context["teams"] = teams
+        return context
+
+
+class WorkerCreateView(generic.CreateView):
+    model = Worker
+    form_class = WorkerCreationForm
+    success_url = reverse_lazy("tasks:worker-list")
+
+
+class WorkerUpdateView(generic.UpdateView):
+    model = Worker
+    form_class = WorkerCreationForm
+    success_url = reverse_lazy("tasks:worker-detail")
+
+
+class WorkerDeleteView(generic.DeleteView):
+    model = Worker

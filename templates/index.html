@@ -55,7 +55,7 @@
           <div class="col-md-4 position-relative">
             <a href="#" class="text-reset text-decoration-none d-block" aria-label="Go to projects">
               <div class="p-3 text-center">
-                <h1 class="text-gradient text-primary"> <span id="state2" countTo="{{ projects_count }}">0</span></h1>
+                <h1 class="text-gradient text-primary"> <span id="state2" countTo="{{ project_count }}">0</span></h1>
                 <h5 class="mt-3">Projects</h5>
                 <p class="text-sm">Group tasks and monitor progress</p>
               </div>
@@ -63,7 +63,7 @@
             <hr class="vertical dark">
           </div>
           <div class="col-md-4">
-            <a href="#" class="text-reset text-decoration-none d-block" aria-label="Go to workers">
+            <a href="{% url 'tasks:worker-list' %}" class="text-reset text-decoration-none d-block" aria-label="Go to workers">
               <div class="p-3 text-center">
                 <h1 class="text-gradient text-primary" id="state3" countTo="{{ worker_count }}">0</h1>
                 <h5 class="mt-3">Workers</h5>
