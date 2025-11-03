@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm, \
-    WorkerSearchForm, WorkerCreationForm
+    WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm
 from tasks.models import Task, Worker, Project, TaskType
 
 
@@ -129,7 +129,7 @@ class TaskTypeCreateView(generic.CreateView):
 
 class TaskTypeUpdateView(generic.UpdateView):
     model = TaskType
-    form_class = TaskTypeCreateForm
+    form_class = TaskTypeUpdateForm
     template_name = "tasks/task_type_form.html"
     success_url = reverse_lazy("tasks:task-type-detail")
 

@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from tasks.models import Task, TaskType, Worker
 
@@ -53,12 +52,25 @@ class TaskTypeSearchForm(forms.Form):
         )
     )
 
+
+# Потрібно змінити порядок успадкування, або ж взагалі переписати клас
 class TaskUpdateForm(TaskCreateForm, forms.ModelForm):
     class Meta(TaskCreateForm.Meta):
         fields = ("is_completed",) + TaskCreateForm.Meta.fields
 
 
 class TaskTypeCreateForm(forms.ModelForm):
+    class Meta:
+        model = TaskType
+        fields = ("name", "description")
+        labels = {"name": "", "description": ""}
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Name*"}),
+            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+        }
+
+
+class TaskTypeUpdateForm(forms.ModelForm):
     class Meta:
         model = TaskType
         fields = ("name", "description")
