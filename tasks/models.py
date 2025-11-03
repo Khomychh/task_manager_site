@@ -13,14 +13,6 @@ class Worker(AbstractUser):
         null=True,
         blank=True,
     )
-    first_name = models.CharField(
-        _("first name"),
-        max_length=150,
-    )
-    last_name = models.CharField(
-        _("last name"),
-        max_length=150,
-    )
     full_name = models.CharField(
         max_length=150,
         editable=False,
