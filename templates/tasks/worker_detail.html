@@ -44,6 +44,19 @@
               <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ worker.email }}</li>
             </ul>
           </div>
+          <div class="card-body p-3">
+            {# Кнопка посилання change #}
+            <a href="{% url 'tasks:worker-update' pk=worker.id %}"
+               class="btn btn-sm bg-gradient-primary w-100 text-nowrap">
+              Update
+            </a>
+
+            {# Кнопка видалення #}
+            <a href="{% url 'tasks:worker-delete' pk=worker.id %}"
+               class="btn btn-sm bg-gradient-danger w-100 text-nowrap">
+              Delete
+            </a>
+          </div>
         </div>
       </div>
 
