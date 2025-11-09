@@ -112,6 +112,9 @@ class Position(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("tasks:position-detail", kwargs={"pk": self.pk})
+
 
 class Team(models.Model):
     """
