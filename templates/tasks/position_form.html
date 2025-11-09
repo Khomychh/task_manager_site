@@ -1,0 +1,22 @@
+{% extends "layouts/base_sections.html" %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+  <title>
+    {{ object|yesno:"Update,Create" }} a position
+  </title>
+{% endblock %}
+
+{% block content %}
+  <div class="container pt-7">
+    <h1>{{ object|yesno:"Update,Create" }} a position</h1>
+    <form action="" method="post" novalidate>
+      {% csrf_token %}
+      {{ form|crispy }}
+
+      <input type="submit"
+             value="{{ object|yesno:"Update,Create" }}"
+             class="btn btn-primary">
+    </form>
+  </div>
+{% endblock %}

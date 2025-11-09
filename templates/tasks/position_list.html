@@ -1,0 +1,111 @@
+{% extends "layouts/base_sections.html" %}
+{% load static %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+  <title>
+    Positions
+  </title>
+{% endblock %}
+
+{% block icon %}
+  <link rel="icon" type="image/png" href="{% static 'img/job-profile.png' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4" style="margin-top: 90px">
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header pb-0">
+            <div  class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2">
+              <h5>Positions</h5>
+              <form action="" method="get" class="d-flex flex-row flex-wrap align-items-center gap-2 w-100 w-sm-auto ms-sm-auto
+                 rounded-2 px-2 py-1">
+                {{ search_form|crispy }}
+                <input class="btn bg-gradient-white w-auto me-2" type="submit" value="Search">
+              </form>
+              <a href="{% url 'tasks:position-create' %}"
+                 class="btn bg-gradient-primary w-auto me-2">
+                <i class="icon-plus"></i>
+              </a>
+            </div>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            {% if position_list %}
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for position in position_list %}
+                      <tr>
+                        {# Колонка з іменем та аватаром #}
+                        <td>
+                          <a href="{{ position.get_absolute_url }}" class="text-reset text-decoration-none">
+                            <div class="d-flex px-2 py-1">
+                              <div>
+                                <img src="{% static "img/job-profile.png " %}" class="avatar avatar-sm me-3" alt="user1">
+                              </div>
+                              <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">{{ position.name }}</h6>
+                              </div>
+                            </div>
+                          </a>
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <a href="{% url 'tasks:position-update' pk=position.id %}" class="text-reset text-decoration-none">
+                            <span class="text-primary text-xs font-weight-bold">Update</span>
+                          </a>
+                        </td>
+
+                        <td class="align-middle">
+                          <a href="{% url 'tasks:position-delete' pk=position.id %}" class="text-danger font-weight-bold text-xs">
+                            Delete
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <a href="{% url 'tasks:position-create' %}" class="text-reset text-decoration-none">
+                <div class="d-flex align-items-center justify-content-center py-6">
+                <div class="text-center p-5 empty-state">
+                  <div class="empty-illustration mb-3" aria-hidden="true">
+                    <svg viewBox="0 0 96 96" width="88" height="88">
+                      <defs>
+                        <linearGradient id="g" x1="0" x2="1">
+                          <stop offset="0" stop-color="#5e72e4"/>
+                          <stop offset="1" stop-color="#825ee4"/>
+                        </linearGradient>
+                      </defs>
+                      <rect x="12" y="14" rx="12" ry="12" width="72" height="68" fill="url(#g)" opacity=".15"/>
+                      <rect x="22" y="24" rx="8" ry="8" width="52" height="48" fill="url(#g)" opacity=".22"/>
+                      <path d="M30 40h36M30 52h24" stroke="#6c63ff" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+                      <circle cx="72" cy="68" r="6" fill="#6c63ff" opacity=".65"/>
+                      <circle cx="24" cy="68" r="6" fill="#6c63ff" opacity=".25"/>
+                    </svg>
+                  </div>
+
+                  <h5 class="mb-1">It's empty here for now</h5>
+                  <p class="text-secondary mb-4">
+                    Create your first position
+                  </p>
+                </div>
+              </div>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

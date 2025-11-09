@@ -4,8 +4,8 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm, \
-    WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm, WorkerUpdateForm
-from tasks.models import Task, Worker, Project, TaskType
+    WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm, WorkerUpdateForm, PositionSearchForm, PositionCreateForm
+from tasks.models import Task, Worker, Project, TaskType, Position
 
 
 def index(request):
@@ -116,7 +116,6 @@ class TaskTypeDetailView(generic.DetailView):
         tasks_count = self.object.tasks.count()
         task_list = self.object.tasks.all()
         context["tasks_count"] = tasks_count
-        context["task_list"] = task_list
         return context
 
 
@@ -188,8 +187,56 @@ class WorkerCreateView(generic.CreateView):
 class WorkerUpdateView(generic.UpdateView):
     model = Worker
     form_class = WorkerUpdateForm
-    success_url = reverse_lazy("tasks:worker-detail")
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:worker-detail", kwargs={"pk": self.object.pk})
 
 
 class WorkerDeleteView(generic.DeleteView):
     model = Worker
+
+class PositionListView(generic.ListView):
+    model = Position
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name", "")
+        context["search_form"] = PositionSearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Position.objects.all()
+        name = self.request.GET.get("name", "")
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
+
+
+class PositionDetailView(generic.DetailView):
+    model = Position
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        worker_count = self.object.workers.count()
+        context["worker_count"] = worker_count
+        return context
+
+
+class PositionCreateView(generic.CreateView):
+    model = Position
+    form_class = PositionCreateForm
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:position-detail", kwargs={"pk": self.object.pk})
+
+
+class PositionUpdateView(generic.UpdateView):
+    model = Position
+    fields = ("name", "description")
+
+
+class PositionDeleteView(generic.DeleteView):
+    model = Position
