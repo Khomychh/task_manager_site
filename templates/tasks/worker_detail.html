@@ -42,6 +42,11 @@
                 {% endif %}
               </li>
               <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ worker.email }}</li>
+              <li class="list-group-item border-0 ps-0 text-sm">
+                <a href="{% url 'tasks:position-detail' pk=worker.position_id %}" class="text-reset text-decoration-none">
+                  <strong class="text-dark">Email:</strong> &nbsp; {{ worker.position }}
+                </a>
+              </li>
             </ul>
           </div>
           <div class="card-body p-3">
