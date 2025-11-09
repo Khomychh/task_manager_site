@@ -42,6 +42,33 @@ class TaskCreateForm(forms.ModelForm):
         }
 
 
+class TaskUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = (
+            "is_completed",
+            "name",
+            "priority",
+            "deadline",
+            "type",
+            "project",
+            "description",
+            "assignees",
+        )
+        labels = {"name": "", "description": "",}
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Name*"}),
+            "deadline": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                },
+                format="%Y-%m-%dT%H:%M",
+            ),
+            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "assignees": forms.CheckboxSelectMultiple,
+        }
+
+
 class TaskTypeSearchForm(forms.Form):
     name = forms.CharField(
         max_length=100,
@@ -51,12 +78,6 @@ class TaskTypeSearchForm(forms.Form):
             attrs={"placeholder": "Name"}
         )
     )
-
-
-# Потрібно змінити порядок успадкування, або ж взагалі переписати клас
-class TaskUpdateForm(TaskCreateForm, forms.ModelForm):
-    class Meta(TaskCreateForm.Meta):
-        fields = ("is_completed",) + TaskCreateForm.Meta.fields
 
 
 class TaskTypeCreateForm(forms.ModelForm):
@@ -95,17 +116,39 @@ class WorkerSearchForm(forms.Form):
 class WorkerCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
-        fields = UserCreationForm.Meta.fields + ("last_name", "first_name", "email", "position")
+        fields = UserCreationForm.Meta.fields + (
+            "last_name",
+            "first_name",
+            "email",
+            "position",
+            "biography",
+        )
         labels = {
             "username": "",
             "first_name": "",
             "last_name": "",
             "email": "",
+            "biography": ""
         }
         widgets = {
             "username": forms.TextInput(attrs={"placeholder": "Username*"}),
             "last_name": forms.TextInput(attrs={"placeholder": "Last name*"}),
             "first_name": forms.TextInput(attrs={"placeholder": "First name*"}),
             "email": forms.TextInput(attrs={"placeholder": "Email"}),
-
+            "biography": forms.Textarea(attrs={"placeholder": "Biography"}),
         }
+
+
+class WorkerUpdateForm(UserChangeForm):
+    password = None
+
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "username",
+            "last_name",
+            "first_name",
+            "email",
+            "position",
+            "biography",
+        )
