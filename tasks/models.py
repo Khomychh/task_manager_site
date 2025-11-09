@@ -28,7 +28,7 @@ class Worker(AbstractUser):
         ordering = ["username"]
 
     def __str__(self):
-        if self.full_name:
+        if self.first_name and self.last_name:
             return self.full_name
         return self.username
 
