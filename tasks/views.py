@@ -4,8 +4,9 @@ from django.urls import reverse_lazy
 from django.views import generic
 
 from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm, \
-    WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm, WorkerUpdateForm, PositionSearchForm, PositionCreateForm
-from tasks.models import Task, Worker, Project, TaskType, Position
+    WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm, WorkerUpdateForm, PositionSearchForm, PositionCreateForm, \
+    TeamSearchForm, TeamCreateForm, TeamUpdateForm
+from tasks.models import Task, Worker, Project, TaskType, Position, Team
 
 
 def index(request):
@@ -228,9 +229,7 @@ class PositionDetailView(generic.DetailView):
 class PositionCreateView(generic.CreateView):
     model = Position
     form_class = PositionCreateForm
-
-    def get_success_url(self):
-        return reverse_lazy("tasks:position-detail", kwargs={"pk": self.object.pk})
+    success_url = reverse_lazy("tasks:position-list")
 
 
 class PositionUpdateView(generic.UpdateView):
@@ -240,3 +239,61 @@ class PositionUpdateView(generic.UpdateView):
 
 class PositionDeleteView(generic.DeleteView):
     model = Position
+    success_url = reverse_lazy("tasks:position-list")
+
+
+class TeamListView(generic.ListView):
+    model = Team
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name", "")
+        context["search_form"] = TeamSearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Team.objects.all()
+        name = self.request.GET.get("name", "")
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
+
+
+class TeamDetailView(generic.DetailView):
+    model = Team
+    context_object_name = "team"
+
+    def get_queryset(self):
+        return Team.objects.all().prefetch_related("workers", "projects")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "workers": self.object.workers.all(),
+            "projects": self.object.projects.all(),
+            "has_workers": self.object.workers.exists(),
+            "has_projects": self.object.projects.exists(),
+        })
+        return context
+
+
+class TeamCreateView(generic.CreateView):
+    model = Team
+    form_class = TeamCreateForm
+    success_url = reverse_lazy("tasks:team-list")
+
+
+class TeamUpdateView(generic.UpdateView):
+    model = Team
+    form_class = TeamUpdateForm
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:team-detail", kwargs={"pk": self.object.pk})
+
+
+class TeamDeleteView(generic.DeleteView):
+    model = Team
+    success_url = reverse_lazy("tasks:team-list")

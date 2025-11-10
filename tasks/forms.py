@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from tasks.models import Task, TaskType, Worker, Position
+from tasks.models import Task, TaskType, Worker, Position, Team
 
 
 class TaskSearchForm(forms.Form):
@@ -173,4 +173,37 @@ class PositionCreateForm(forms.ModelForm):
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "description": forms.Textarea(attrs={"placeholder": "Description"}),
+        }
+
+
+class TeamSearchForm(forms.Form):
+    name = forms.CharField(
+        max_length=100,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={"placeholder": "Name"}
+        )
+    )
+
+
+class TeamCreateForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = ("name", "workers", "projects")
+        labels = {"name": "",}
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Name*"}),
+            "workers": forms.CheckboxSelectMultiple(),
+            "projects": forms.CheckboxSelectMultiple(),
+        }
+
+
+class TeamUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = ("name", "workers", "projects")
+        widgets = {
+            "workers": forms.CheckboxSelectMultiple(),
+            "projects": forms.CheckboxSelectMultiple(),
         }
