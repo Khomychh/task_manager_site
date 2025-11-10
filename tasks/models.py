@@ -122,7 +122,6 @@ class Team(models.Model):
     але працює над проєктамм
     """
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, default="")
     workers = models.ManyToManyField(
         "Worker",
         related_name="teams",
@@ -137,6 +136,9 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("tasks:team-detail", kwargs={"pk": self.pk})
 
 
 class Project(models.Model):
