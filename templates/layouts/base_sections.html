@@ -53,8 +53,9 @@
 </head>
 
 <body {% block body %}{% endblock body %} >
-
-  {% block header %}
+  <div class="page-main">
+  <div class="page-content">
+    {% block header %}
 
     {% include 'includes/navigation.html' %}
 
@@ -66,11 +67,16 @@
     {% include "includes/pagination.html" %}
   {% endblock %}
 
-  {% block footer %}
-  
+  </div>
+  <div class="site-footer">
+    {% block footer %}
+
     {% include 'includes/footer_background.html' %}
 
   {% endblock footer %}
+  </div>
+  </div>
+
 
   {% include 'includes/scripts.html' %}
 

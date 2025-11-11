@@ -1,4 +1,18 @@
 /* My style */
+.page-main {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+.page-content {
+    flex: 1 0 auto;
+}
+
+.site-footer {
+    margin-top: auto;
+}
+
 .empty-state{
     border: 0 solid rgba(0,0,0,.08);
     border-radius: 1rem;
