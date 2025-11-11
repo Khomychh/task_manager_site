@@ -44,14 +44,9 @@
 
       <div class="col-md-2 col-sm-6 col-6 mb-4">
         <div>
-          <h6 class="text-gradient text-primary text-sm">Help & Support</h6>
-          <ul class="flex-column ms-n3 nav">
-            <li class="nav-item">
-              <a class="nav-link" href="https://www.creative-tim.com/contact-us?AFFILIATE=128200" target="_blank">
-                Contact Us
-              </a>
-            </li>
-          </ul>
+          <a href="{% url 'tasks:project-list' %}" class="text-reset text-decoration-none">
+            <h6 class="text-gradient text-primary text-sm">Projects</h6>
+          </a>
         </div>
       </div>
 
@@ -60,13 +55,6 @@
           <a href="{% url 'tasks:team-list' %}" class="text-reset text-decoration-none">
             <h6 class="text-gradient text-primary text-sm">Teams</h6>
           </a>
-          <ul class="flex-column ms-n3 nav">
-            <li class="nav-item">
-              <a class="nav-link" href="https://www.creative-tim.com/terms?AFFILIATE=128200" target="_blank">
-                Terms &amp; Conditions
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
 

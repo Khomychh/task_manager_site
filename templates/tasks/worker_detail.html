@@ -44,7 +44,7 @@
               <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ worker.email }}</li>
               <li class="list-group-item border-0 ps-0 text-sm">
                 <a href="{% url 'tasks:position-detail' pk=worker.position_id %}" class="text-reset text-decoration-none">
-                  <strong class="text-dark">Email:</strong> &nbsp; {{ worker.position }}
+                  <strong class="text-dark">Position:</strong> &nbsp; {{ worker.position }}
                 </a>
               </li>
             </ul>
@@ -153,7 +153,7 @@
                                   <a href="#" class="text-reset text-decoration-none">
                                     <div class="d-flex px-2 py-1">
                                       <div>
-                                        <img src="{% static "img/team.png " %}" class="avatar avatar-sm me-3">
+                                        <img src="{% static "img/team-black.png " %}" class="avatar avatar-sm me-3">
                                       </div>
                                       <div class="d-flex flex-column justify-content-center">
                                         <h6 class="mb-0 text-sm">{{ team.name }}</h6>

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from tasks.models import Task, TaskType, Worker, Position, Team
+from tasks.models import Task, TaskType, Worker, Position, Team, Project
 
 
 class TaskSearchForm(forms.Form):
@@ -206,4 +206,48 @@ class TeamUpdateForm(forms.ModelForm):
         widgets = {
             "workers": forms.CheckboxSelectMultiple(),
             "projects": forms.CheckboxSelectMultiple(),
+        }
+
+
+class ProjectSearchForm(forms.Form):
+    name = forms.CharField(
+        max_length=100,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={"placeholder": "Name"}
+        )
+    )
+
+
+class ProjectCreateForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ("name", "description", "deadline", "leader")
+        labels = {"name": "", "description": "",}
+        widgets = {
+            "name": forms.TextInput(attrs={"placeholder": "Name*"}),
+            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "deadline": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                },
+                format="%Y-%m-%dT%H:%M",
+            ),
+            "leader": forms.Select(),
+        }
+
+
+class ProjectUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ("name", "description", "deadline", "is_completed", "leader")
+        widgets = {
+            "deadline": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local",
+                },
+                format="%Y-%m-%dT%H:%M",
+            ),
+            "leader": forms.Select(),
         }

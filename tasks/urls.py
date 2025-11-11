@@ -4,7 +4,8 @@ from tasks.views import index, TaskListView, TaskDetailView, toggle_completed, T
     TaskDeleteView, TaskTypeListView, TaskTypeDetailView, TaskTypeCreateView, TaskTypeUpdateView, TaskTypeDeleteView, \
     WorkerListView, WorkerDetailView, WorkerCreateView, WorkerUpdateView, WorkerDeleteView, PositionListView, \
     PositionDetailView, PositionDeleteView, PositionCreateView, PositionUpdateView, TeamListView, TeamDetailView, \
-    TeamDeleteView, TeamCreateView, TeamUpdateView
+    TeamDeleteView, TeamCreateView, TeamUpdateView, ProjectListView, ProjectDetailView, ProjectDeleteView, \
+    ProjectCreateView, ProjectUpdateView, project_toggle_completed
 
 urlpatterns = [
     path("", index, name="index"),
@@ -44,6 +45,14 @@ urlpatterns = [
     path("teams/create/", TeamCreateView.as_view(), name="team-create"),
     path("teams/<int:pk>/update/", TeamUpdateView.as_view(), name="team-update"),
     path("teams/<int:pk>/delete/", TeamDeleteView.as_view(), name="team-delete"),
+
+    # Project
+    path("projects/", ProjectListView.as_view(), name="project-list"),
+    path("projects/<int:pk>/", ProjectDetailView.as_view(), name="project-detail"),
+    path("projects/create/", ProjectCreateView.as_view(), name="project-create"),
+    path("projects/<int:pk>/update/", ProjectUpdateView.as_view(), name="project-update"),
+    path("projects/<int:pk>/delete/", ProjectDeleteView.as_view(), name="project-delete"),
+    path("project/<int:pk>/completed/", project_toggle_completed, name="project-toggle-completed"),
 ]
 
 app_name = "tasks"

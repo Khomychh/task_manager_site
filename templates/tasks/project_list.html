@@ -1,0 +1,121 @@
+{% extends "layouts/base_sections.html" %}
+{% load crispy_forms_filters %}
+
+{% load static %}
+
+{% block title %}
+  <title>
+    Projects
+  </title>
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4" style="margin-top: 90px">
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-4">
+          <div class="card-header pb-0">
+            <div  class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2">
+              <h5>Projects</h5>
+              <form action="" method="get" class="d-flex flex-row flex-wrap align-items-center gap-2 w-100 w-sm-auto ms-sm-auto
+                 bg-white rounded-2 px-2 py-1">
+                {{ search_form|crispy }}
+                <input class="btn bg-gradient-white w-auto me-2" type="submit" value="Search">
+              </form>
+              <a href="{% url 'tasks:project-create' %}"
+                 class="btn bg-gradient-primary w-auto me-2">
+                <i class="icon-plus"></i>
+              </a>
+            </div>
+          </div>
+          <div class="card-body px-0 pt-0 pb-2">
+            {% if project_list %}
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Leader</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for project in project_list %}
+                      <tr>
+                        <td>
+                          <a href="{{ project.get_absolute_url }}" class="text-reset text-decoration-none">
+                            <div class="d-flex px-2 py-1">
+                              <div>
+                                <img src="{% static "img/project.png " %}" class="avatar avatar-sm me-3" alt="user1">
+                              </div>
+                              <div class="d-flex flex-column justify-content-center">
+                                <h6 class="mb-0 text-sm">{{ project.name }}</h6>
+                              </div>
+                            </div>
+                          </a>
+                        </td>
+
+                        <td>
+                          <a href="{% url 'tasks:worker-detail' pk=project.leader.id %}" class="text-reset text-decoration-none">
+                            <p class="text-xs font-weight-bold mb-0">{{ project.leader }}</p>
+                          </a>
+                        </td>
+
+                        <td class="align-middle text-center text-sm">
+                          <form method="post" action="{% url 'tasks:project-toggle-completed' pk=project.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit"
+                                    class="badge badge-sm btn {% if project.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} text-nowrap m-0">
+                              {% if project.is_completed %}
+                                <span>Completed</span>
+                              {% else %}
+                                <span>Uncompleted</span>
+                              {% endif %}
+                            </button>
+                          </form>
+                        </td>
+
+                        <td class="align-middle text-center">
+                          <span class="text-secondary text-xs font-weight-bold">{{ project.deadline }}</span>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            {% else %}
+              <a href="{% url 'tasks:project-create' %}" class="text-reset text-decoration-none">
+                <div class="d-flex align-items-center justify-content-center py-6">
+                <div class="text-center p-5 empty-state">
+                  <div class="empty-illustration mb-3" aria-hidden="true">
+                    <svg viewBox="0 0 96 96" width="88" height="88">
+                      <defs>
+                        <linearGradient id="g" x1="0" x2="1">
+                          <stop offset="0" stop-color="#5e72e4"/>
+                          <stop offset="1" stop-color="#825ee4"/>
+                        </linearGradient>
+                      </defs>
+                      <rect x="12" y="14" rx="12" ry="12" width="72" height="68" fill="url(#g)" opacity=".15"/>
+                      <rect x="22" y="24" rx="8" ry="8" width="52" height="48" fill="url(#g)" opacity=".22"/>
+                      <path d="M30 40h36M30 52h24" stroke="#6c63ff" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+                      <circle cx="72" cy="68" r="6" fill="#6c63ff" opacity=".65"/>
+                      <circle cx="24" cy="68" r="6" fill="#6c63ff" opacity=".25"/>
+                    </svg>
+                  </div>
+
+                  <h5 class="mb-1">It's empty here for now</h5>
+                  <p class="text-secondary mb-4">
+                    Create your first project
+                  </p>
+                </div>
+              </div>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

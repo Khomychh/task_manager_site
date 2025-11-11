@@ -5,7 +5,7 @@ from django.views import generic
 
 from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm, \
     WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm, WorkerUpdateForm, PositionSearchForm, PositionCreateForm, \
-    TeamSearchForm, TeamCreateForm, TeamUpdateForm
+    TeamSearchForm, TeamCreateForm, TeamUpdateForm, ProjectSearchForm, ProjectCreateForm, ProjectUpdateForm
 from tasks.models import Task, Worker, Project, TaskType, Position, Team
 
 
@@ -297,3 +297,77 @@ class TeamUpdateView(generic.UpdateView):
 class TeamDeleteView(generic.DeleteView):
     model = Team
     success_url = reverse_lazy("tasks:team-list")
+
+
+class ProjectListView(generic.ListView):
+    model = Project
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name", "")
+        context["search_form"] = ProjectSearchForm(
+            initial={"name": name}
+        )
+        return context
+
+    def get_queryset(self):
+        queryset = Project.objects.all().select_related("leader")
+        name = self.request.GET.get("name", "")
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        return queryset
+
+
+class ProjectDetailView(generic.DetailView):
+    model = Project
+    context_object_name = "project"
+
+    def get_queryset(self):
+        return Project.objects.all().select_related("leader").prefetch_related("tasks", "teams")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "has_tasks": self.object.tasks.exists(),
+            "tasks": self.object.tasks.all(),
+            "has_teams": self.object.teams.exists(),
+            "teams": self.object.teams.all(),
+        })
+        return context
+
+
+class ProjectCreateView(generic.CreateView):
+    model = Project
+    form_class = ProjectCreateForm
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:project-detail", kwargs={"pk": self.object.pk})
+
+
+class ProjectUpdateView(generic.UpdateView):
+    model = Project
+    form_class = ProjectUpdateForm
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:project-detail", kwargs={"pk": self.object.pk})
+
+
+class ProjectDeleteView(generic.DeleteView):
+    model = Project
+    success_url = reverse_lazy("tasks:project-list")
+
+
+def project_toggle_completed(request, pk: int):
+    project = Project.objects.get(pk=pk)
+    if project:
+        if project.is_completed:
+            project.is_completed = False
+        else:
+            project.is_completed = True
+        project.save()
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if not next_url:
+        next_url = request.META.get("HTTP_REFERER")
+
+    return redirect(next_url)

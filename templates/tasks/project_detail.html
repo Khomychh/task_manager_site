@@ -1,0 +1,169 @@
+{% extends "layouts/base_sections.html" %}
+{% load static %}
+
+{% block title %}
+  <title>
+    {{ project.name }}
+  </title>
+{% endblock %}
+
+{% block content %}
+  <section class="my-5 py-5">
+  <div class="container">
+    <div class="row pt-lg-6">
+      <div class="col-12 col-xl-4 mt-3">
+        <div class="card sticky-top" style="top: 90px">
+          <div class="card-header pb-0 p-3">
+            <div class="row">
+              <div class="col-md-8 d-flex align-items-center">
+                <h3 class="mb-0">{{ project.name }}</h3>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-3 pb-0 mb-0">
+            <p class="text-sm">
+              {% if project.description %}
+                {{ project.description }}
+              {% else %}
+                This project has no description.
+              {% endif %}
+            </p>
+            <hr class="horizontal gray-light my-4">
+          </div>
+          <div class="py-0 px-3">
+            <ul class="list-unstyled mb-0">
+              {# Deadline #}
+              <li class="d-flex align-items-center mb-2">
+                <i class="icon-calendar me-2"></i>
+                <span class="badge text-dark border">
+                  {{ project.deadline|date:"M d, Y — H:i" }}
+                </span>
+              </li>
+
+              {# Leader #}
+              <li class="d-flex align-items-center">
+                <a href="{{ project.leader.get_absolute_url }}" class="text-reset text-decoration-none">
+                  <span class="me-2">Leader:</span>
+                  <span class="badge bg-primary-subtle text-dark">
+                    {{ project.leader }}
+                  </span>
+                </a>
+              </li>
+            </ul>
+            <hr class="horizontal gray-light my-4">
+            {# Teams #}
+            {% if has_teams %}
+              <h5 class="card-title mb-2">Teams:</h5>
+              <ul class="list-unstyled mb-0">
+                {% for team in teams %}
+                  <li class="d-flex align-items-center mb-2">
+                    <a href="{{ team.get_absolute_url }}" class="text-reset text-decoration-none">
+                      <i class="icon-angle-double-right"></i>
+                      <span class="bg-primary-subtle text-dark">
+                        {{ team.name }}
+                      </span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <h5 class="card-title mb-2">Teams:</h5>
+              <div class="d-inline-block">
+                <i class="icon-user"></i>
+                <span class="bg-primary-subtle text-dark">No teams</span>
+              </div>
+            {% endif %}
+            <hr class="horizontal gray-light my-4">
+            <div class="card-body py-3 px-0">
+              {# Кнопка зміни статусу завдання #}
+              <div class="d-inline-block w-100">
+                <form method="post" action="{% url 'tasks:project-toggle-completed' pk=project.id %}" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit"
+                          class="btn btn-sm {% if project.is_completed %}bg-gradient-success{% else %}bg-gradient-secondary{% endif %} w-100 text-nowrap">
+                    {% if project.is_completed %}
+                      Mark as incomplete
+                    {% else %}
+                      Mark as done
+                    {% endif %}
+                  </button>
+                </form>
+              </div>
+              {# Кнопка посилання change #}
+              <a href="{% url 'tasks:project-update' pk=project.id %}"
+                 class="btn btn-sm bg-gradient-primary w-100 text-nowrap">
+                Update
+              </a>
+
+              {# Кнопка видалення #}
+              <a href="{% url 'tasks:project-delete' pk=project.id %}"
+                 class="btn btn-sm bg-gradient-danger w-100 text-nowrap">
+                Delete
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# block projects #}
+      <div class="col-lg-8">
+
+        {# Tasks #}
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-7">
+              <div class="container">
+                <div class="row justify-space-between py-2">
+                  <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
+                    <p class="lead text-dark pt-1 mb-0">Tasks</p>
+                  </div>
+                </div>
+              </div>
+
+              {# Content #}
+              <div class="tab-content tab-space">
+                <div class="tab-pane active" id="preview-typo">
+                  <div class="position-relative p-4">
+                    {% if has_tasks %}
+                      <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                          <thead>
+                            <tr>
+                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for task in tasks %}
+                              <tr>
+                                <td>
+                                  <a href="{{ task.get_absolute_url }}" class="text-reset text-decoration-none">
+                                    <div class="d-flex px-2 py-1">
+                                      <div>
+                                        <img src="{% static "img/tasks_1.png " %}" class="avatar avatar-sm me-3" alt="user1">
+                                      </div>
+                                      <div class="d-flex flex-column justify-content-center">
+                                        <h6 class="mb-0 text-sm">{{ task.name }}</h6>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      No tasks.
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

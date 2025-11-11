@@ -76,7 +76,7 @@
                             {% for project in projects %}
                               <tr>
                                 <td>
-                                  <a href="#" class="text-reset text-decoration-none">
+                                  <a href="{{ project.get_absolute_url }}" class="text-reset text-decoration-none">
                                     <div class="d-flex px-2 py-1">
                                       <div>
                                         <img src="{% static "img/project.png " %}" class="avatar avatar-sm me-3" alt="user1">
