@@ -21137,7 +21137,7 @@ fieldset:disabled .btn {
 
   .dropdown .dropdown-menu:before {
     font-family: "FontAwesome";
-    content: "\f0d8";
+    content: none;
     position: absolute;
     top: 0;
     left: 28px;
@@ -21173,7 +21173,7 @@ fieldset:disabled .btn {
 
   .navbar-toggler+.navbar-collapse .dropdown:not(.nav-item) .dropdown-menu:before {
     font-family: "FontAwesome";
-    content: "\f0d8";
+    content: "none";
     position: absolute;
     top: 0;
     left: 28px;
@@ -21200,7 +21200,7 @@ fieldset:disabled .btn {
 
   .navbar-toggler+.navbar-collapse .dropdown.nav-item .dropdown-menu {
     background-color: transparent;
-    overflow: scroll;
+    overflow: hidden;
     position: relative;
     transform: none !important;
     box-shadow: none !important;
@@ -21221,7 +21221,7 @@ fieldset:disabled .btn {
 
   :not(.navbar) .dropdown .dropdown-menu:before {
     font-family: "FontAwesome";
-    content: "\f0d8";
+    content: none;
     position: absolute;
     top: 0;
     left: 28px;
@@ -21259,7 +21259,7 @@ fieldset:disabled .btn {
   }
 
   .dropdown.nav-item .dropdown-menu-animation.show {
-    height: 250px;
+    height: auto;
     opacity: 1;
   }
 
@@ -21365,7 +21365,7 @@ fieldset:disabled .btn {
 
 .dropup .dropdown-menu:after {
   font-family: "FontAwesome";
-  content: "\f0d7";
+  content: none;
   position: absolute;
   z-index: -1;
   bottom: 22px;
