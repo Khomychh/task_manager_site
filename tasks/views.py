@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -23,7 +24,7 @@ def index(request):
     return render(request, "index.html", context=context)
 
 
-class TaskListView(generic.ListView):
+class TaskListView(LoginRequiredMixin, generic.ListView):
     model = Task
     paginate_by = 10
 
@@ -43,7 +44,7 @@ class TaskListView(generic.ListView):
         return queryset
 
 
-class TaskDetailView(generic.DetailView):
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
     model = Task
     queryset = Task.objects.all().select_related(
         "type", "project").prefetch_related("assignees")
@@ -55,22 +56,22 @@ class TaskDetailView(generic.DetailView):
         return context
 
 
-class TaskCreateView(generic.CreateView):
+class TaskCreateView(LoginRequiredMixin, generic.CreateView):
     model = Task
     form_class = TaskCreateForm
     success_url = reverse_lazy("tasks:task-list")
 
 
-class TaskUpdateView(generic.UpdateView):
+class TaskUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Task
     form_class = TaskUpdateForm
 
 
-class TaskDeleteView(generic.DeleteView):
+class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Task
     success_url = reverse_lazy("tasks:task-list")
 
-
+@login_required
 def toggle_completed(request, pk: int):
     task = Task.objects.get(id=pk)
     if task:
@@ -86,7 +87,7 @@ def toggle_completed(request, pk: int):
     return redirect(next_url)
 
 
-class TaskTypeListView(generic.ListView):
+class TaskTypeListView(LoginRequiredMixin, generic.ListView):
     model = TaskType
     template_name = "tasks/task_type_list.html"
     context_object_name = "task_type_list"
@@ -107,7 +108,7 @@ class TaskTypeListView(generic.ListView):
             queryset = queryset.filter(name__icontains=name)
         return queryset
 
-class TaskTypeDetailView(generic.DetailView):
+class TaskTypeDetailView(LoginRequiredMixin, generic.DetailView):
     model = TaskType
     template_name = "tasks/task_type_detail.html"
     context_object_name = "task_type"
@@ -121,28 +122,28 @@ class TaskTypeDetailView(generic.DetailView):
         return context
 
 
-class TaskTypeCreateView(generic.CreateView):
+class TaskTypeCreateView(LoginRequiredMixin, generic.CreateView):
     model = TaskType
     form_class = TaskTypeCreateForm
     template_name = "tasks/task_type_form.html"
     success_url = reverse_lazy("tasks:task-type-list")
 
 
-class TaskTypeUpdateView(generic.UpdateView):
+class TaskTypeUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = TaskType
     form_class = TaskTypeUpdateForm
     template_name = "tasks/task_type_form.html"
     success_url = reverse_lazy("tasks:task-type-detail")
 
 
-class TaskTypeDeleteView(generic.DeleteView):
+class TaskTypeDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = TaskType
     template_name = "tasks/task_type_confirm_delete.html"
     context_object_name = "task_type"
     success_url = reverse_lazy("tasks:task-type-list")
 
 
-class WorkerListView(generic.ListView):
+class WorkerListView(LoginRequiredMixin, generic.ListView):
     model = Worker
     paginate_by = 10
 
@@ -162,7 +163,7 @@ class WorkerListView(generic.ListView):
         return queryset
 
 
-class WorkerDetailView(generic.DetailView):
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = Worker
     queryset = Worker.objects.all().select_related("position")
 
@@ -180,13 +181,13 @@ class WorkerDetailView(generic.DetailView):
         return context
 
 
-class WorkerCreateView(generic.CreateView):
+class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
     model = Worker
     form_class = WorkerCreationForm
     success_url = reverse_lazy("tasks:worker-list")
 
 
-class WorkerUpdateView(generic.UpdateView):
+class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Worker
     form_class = WorkerUpdateForm
 
@@ -194,10 +195,10 @@ class WorkerUpdateView(generic.UpdateView):
         return reverse_lazy("tasks:worker-detail", kwargs={"pk": self.object.pk})
 
 
-class WorkerDeleteView(generic.DeleteView):
+class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Worker
 
-class PositionListView(generic.ListView):
+class PositionListView(LoginRequiredMixin, generic.ListView):
     model = Position
     paginate_by = 10
 
@@ -217,7 +218,7 @@ class PositionListView(generic.ListView):
         return queryset
 
 
-class PositionDetailView(generic.DetailView):
+class PositionDetailView(LoginRequiredMixin, generic.DetailView):
     model = Position
 
     def get_context_data(self, **kwargs):
@@ -227,23 +228,23 @@ class PositionDetailView(generic.DetailView):
         return context
 
 
-class PositionCreateView(generic.CreateView):
+class PositionCreateView(LoginRequiredMixin, generic.CreateView):
     model = Position
     form_class = PositionCreateForm
     success_url = reverse_lazy("tasks:position-list")
 
 
-class PositionUpdateView(generic.UpdateView):
+class PositionUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Position
     fields = ("name", "description")
 
 
-class PositionDeleteView(generic.DeleteView):
+class PositionDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Position
     success_url = reverse_lazy("tasks:position-list")
 
 
-class TeamListView(generic.ListView):
+class TeamListView(LoginRequiredMixin, generic.ListView):
     model = Team
     paginate_by = 10
 
@@ -263,7 +264,7 @@ class TeamListView(generic.ListView):
         return queryset
 
 
-class TeamDetailView(generic.DetailView):
+class TeamDetailView(LoginRequiredMixin, generic.DetailView):
     model = Team
     context_object_name = "team"
 
@@ -281,13 +282,13 @@ class TeamDetailView(generic.DetailView):
         return context
 
 
-class TeamCreateView(generic.CreateView):
+class TeamCreateView(LoginRequiredMixin, generic.CreateView):
     model = Team
     form_class = TeamCreateForm
     success_url = reverse_lazy("tasks:team-list")
 
 
-class TeamUpdateView(generic.UpdateView):
+class TeamUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Team
     form_class = TeamUpdateForm
 
@@ -295,12 +296,12 @@ class TeamUpdateView(generic.UpdateView):
         return reverse_lazy("tasks:team-detail", kwargs={"pk": self.object.pk})
 
 
-class TeamDeleteView(generic.DeleteView):
+class TeamDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Team
     success_url = reverse_lazy("tasks:team-list")
 
 
-class ProjectListView(generic.ListView):
+class ProjectListView(LoginRequiredMixin, generic.ListView):
     model = Project
     paginate_by = 10
 
@@ -320,7 +321,7 @@ class ProjectListView(generic.ListView):
         return queryset
 
 
-class ProjectDetailView(generic.DetailView):
+class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
     model = Project
     context_object_name = "project"
 
@@ -338,7 +339,7 @@ class ProjectDetailView(generic.DetailView):
         return context
 
 
-class ProjectCreateView(generic.CreateView):
+class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
     model = Project
     form_class = ProjectCreateForm
 
@@ -346,7 +347,7 @@ class ProjectCreateView(generic.CreateView):
         return reverse_lazy("tasks:project-detail", kwargs={"pk": self.object.pk})
 
 
-class ProjectUpdateView(generic.UpdateView):
+class ProjectUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Project
     form_class = ProjectUpdateForm
 
@@ -354,11 +355,11 @@ class ProjectUpdateView(generic.UpdateView):
         return reverse_lazy("tasks:project-detail", kwargs={"pk": self.object.pk})
 
 
-class ProjectDeleteView(generic.DeleteView):
+class ProjectDeleteView(LoginRequiredMixin, generic.DeleteView):
     model = Project
     success_url = reverse_lazy("tasks:project-list")
 
-
+@login_required
 def project_toggle_completed(request, pk: int):
     project = Project.objects.get(pk=pk)
     if project:
