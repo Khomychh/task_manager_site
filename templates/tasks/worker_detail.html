@@ -56,10 +56,12 @@
               Update
             </a>
 
-            <a href="{% url 'password_change' %}"
-               class="btn btn-sm bg-gradient-secondary w-100 text-nowrap mt-2">
-              Change password
-            </a>
+            {% if user.id == worker.id %}
+              <a href="{% url 'password_change' %}"
+                 class="btn btn-sm bg-gradient-secondary w-100 text-nowrap">
+                Change password
+              </a>
+            {% endif %}
 
             {# Кнопка видалення #}
             <a href="{% url 'tasks:worker-delete' pk=worker.id %}"
