@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -8,7 +9,7 @@ from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskType
     TeamSearchForm, TeamCreateForm, TeamUpdateForm, ProjectSearchForm, ProjectCreateForm, ProjectUpdateForm
 from tasks.models import Task, Worker, Project, TaskType, Position, Team
 
-
+@login_required
 def index(request):
     tasks_count = Task.objects.count()
     project_count = Project.objects.all().count()
