@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import generic
@@ -29,11 +28,15 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
-        context = super(TaskListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         name = self.request.GET.get("name", "")
         context["search_form"] = TaskSearchForm(
             initial={"name": name}
         )
+        context["show_only_my"] = self.request.GET.get("my") == "1"
+        context["status"] = self.request.GET.get("status", "all")
+        context["name"] = name
+        context["ordering"] = self.request.GET.get("ordering", "-deadline")
         return context
 
     def get_queryset(self):
@@ -41,6 +44,19 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         name = self.request.GET.get("name", "")
         if name:
             queryset = queryset.filter(name__icontains=name)
+
+        status = self.request.GET.get("status", None)
+        if status == "completed":
+            queryset = queryset.filter(is_completed=True)
+        if status == "uncompleted":
+            queryset = queryset.filter(is_completed=False)
+
+        ordering = self.request.GET.get("ordering", None)
+        if ordering:
+            allowed_orderings = {"deadline", "-deadline",}
+            if ordering in allowed_orderings:
+                queryset = queryset.order_by(ordering)
+
         return queryset
 
 

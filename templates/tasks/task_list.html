@@ -24,8 +24,105 @@
               <form action="" method="get" class="d-flex flex-row flex-wrap align-items-center gap-2 w-100 w-sm-auto ms-sm-auto
                  bg-white rounded-2 px-2 py-1">
                 {{ search_form|crispy }}
+                <input type="hidden" name="my" value="{{ request.GET.my }}">
+                <input type="hidden" name="status" value="{{ request.GET.status }}">
+                <input type="hidden" name="ordering" value="{{ request.GET.ordering }}">
                 <input class="btn bg-gradient-white w-auto me-2" type="submit" value="Search">
               </form>
+
+              <div class="dropdown">
+                <button class="btn bg-gradient-info dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                  Filters
+                  <i class="icon-down-open"></i>
+                </button>
+                <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
+                  <li>
+                    <form action="" method="get" class="px-2 mb-2">
+                      <input type="hidden" name="search" value="{{ request.GET.search }}">
+                      <button type="submit" class="btn btn-sm bg-gradient-dark w-100">
+                        All
+                      </button>
+                    </form>
+                    <hr class="horizontal dark my-2">
+                  </li>
+                  <li>
+                    <p class="text-md ps-2 mb-1">View:</p>
+                    <form action="" method="get" class="px-2" id="myTasksForm">
+                      <input type="hidden" name="search" value="{{ request.GET.search }}">
+                      <input type="hidden" name="status" value="{{ request.GET.status }}">
+                      <input type="hidden" name="ordering" value="{{ request.GET.ordering }}">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="my" value="0"
+                               id="allTasks" {% if not show_only_my %}checked{% endif %}
+                               onchange="this.form.submit()">
+                        <label class="form-check-label text-sm" for="allTasks">
+                          All tasks
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="my" value="1"
+                               id="myTasks" {% if show_only_my %}checked{% endif %}
+                               onchange="this.form.submit()">
+                        <label class="form-check-label text-sm" for="myTasks">
+                          My tasks
+                        </label>
+                      </div>
+                    </form>
+                    <hr class="horizontal dark my-2">
+                  </li>
+                  <li>
+                    <p class="text-md ps-2 mb-1">Status:</p>
+                    <form action="" method="get" class="px-2" id="statusForm">
+                      <input type="hidden" name="name" value="{{ request.GET.name }}">
+                      <input type="hidden" name="my" value="{{ request.GET.my }}">
+                      <input type="hidden" name="ordering" value="{{ request.GET.ordering }}">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="status" value="completed"
+                               id="completedStatus" {% if request.GET.status == 'completed' %}checked{% endif %}
+                               onchange="this.form.submit()">
+                        <label class="form-check-label text-sm text-success" for="completedStatus">
+                          Completed
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" value="uncompleted"
+                               id="uncompletedStatus" {% if request.GET.status == 'uncompleted' %}checked{% endif %}
+                               onchange="this.form.submit()">
+                        <label class="form-check-label text-sm text-danger" for="uncompletedStatus">
+                          Uncompleted
+                        </label>
+                      </div>
+                    </form>
+                    <hr class="horizontal dark my-2">
+                  </li>
+                  <li>
+                    <p class="text-md ps-2 mb-1">Order by deadline:</p>
+                    <form action="" method="get" class="px-2" id="orderingForm">
+                      <input type="hidden" name="search" value="{{ request.GET.search }}">
+                      <input type="hidden" name="my" value="{{ request.GET.my }}">
+                      <input type="hidden" name="status" value="{{ request.GET.status }}">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="ordering" value="deadline"
+                               id="deadlineAsc" {% if request.GET.ordering == 'deadline' %}checked{% endif %}
+                               onchange="this.form.submit()">
+                        <label class="form-check-label text-sm" for="deadlineAsc">
+                          ⏳ Soonest due
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="ordering" value="-deadline"
+                               id="deadlineDesc" {% if request.GET.ordering == '-deadline' %}checked{% endif %}
+                               onchange="this.form.submit()">
+                        <label class="form-check-label text-sm" for="deadlineDesc">
+                          ⌛ Latest due
+                        </label>
+                      </div>
+                    </form>
+                  </li>
+                </ul>
+              </div>
+
               <a href="{% url 'tasks:task-create' %}"
                  class="btn bg-gradient-primary w-auto me-2">
                 <i class="icon-plus"></i>

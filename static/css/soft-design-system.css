@@ -21089,7 +21089,7 @@ fieldset:disabled .btn {
 
   .dropdown .dropdown-toggle:after,
   .dropup .dropdown-toggle:after {
-    content: "\f107";
+    content: none;
   }
 
   .dropstart .dropdown-toggle:before {
