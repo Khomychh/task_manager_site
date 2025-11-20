@@ -79,6 +79,12 @@ class Task(models.Model):
 
     class Meta:
         ordering = ["deadline"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["name", "project"],
+                name="unique_task_name_per_project",
+            ),
+        ]
 
     def __str__(self):
         return self.name
