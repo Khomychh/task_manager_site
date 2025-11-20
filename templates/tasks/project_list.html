@@ -57,9 +57,11 @@
                         </td>
 
                         <td>
-                          <a href="{% url 'tasks:worker-detail' pk=project.leader.id %}" class="text-reset text-decoration-none">
-                            <p class="text-xs font-weight-bold mb-0">{{ project.leader }}</p>
-                          </a>
+                          {% if project.leader %}
+                            <a href="{% url 'tasks:worker-detail' pk=project.leader.id %}" class="text-reset text-decoration-none">
+                              <p class="text-xs font-weight-bold mb-0">{{ project.leader }}</p>
+                            </a>
+                          {% endif %}
                         </td>
 
                         <td class="align-middle text-center text-sm">

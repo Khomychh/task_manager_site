@@ -121,13 +121,15 @@ class Team(models.Model):
     але працює над проєктамм
     """
     name = models.CharField(max_length=100)
-    workers = models.ManyToManyField(
+    leader = models.ForeignKey(
         "Worker",
-        related_name="teams",
+        on_delete=models.SET_NULL,
+        related_name="team_leaders",
+        null=True,
         blank=True,
     )
-    projects = models.ManyToManyField(
-        "Project",
+    workers = models.ManyToManyField(
+        "Worker",
         related_name="teams",
         blank=True,
     )
@@ -147,17 +149,6 @@ class Project(models.Model):
     description = models.TextField(
         blank=True, default=""
     )
-
-    # дедлайни завдань, які належать до даного проекту не можуть пізніше дедлайну проекту
-    # Від цього постає питання, що робити, якщо хочеть додати завдання до проекту, дедлайн якого пізніше
-    deadline = models.DateTimeField()
-    is_completed = models.BooleanField(default=False)
-
-    # Наступне поле дає можливість ставити лідера проєкту,
-    # а також призначати проєкт одній людині, а не команді.
-    # Також дає можливість, щоб над проєктом працювало декілька команд
-
-    # Лідер проєкту є лідером команди, хоча це можна реалізувати
     leader = models.ForeignKey(
         "Worker",
         on_delete=models.SET_NULL,
@@ -165,6 +156,17 @@ class Project(models.Model):
         null=True,
         blank=True,
     )
+    team = models.ForeignKey(
+        "Team",
+        on_delete=models.SET_NULL,
+        related_name="projects",
+        null=True,
+        blank=True,
+    )
+
+    # дедлайни завдань, які належать до даного проекту не можуть пізніше дедлайну проекту
+    deadline = models.DateField()
+    is_completed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["name"]

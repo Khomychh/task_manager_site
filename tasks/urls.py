@@ -5,7 +5,7 @@ from tasks.views import index, TaskListView, TaskDetailView, toggle_completed, T
     WorkerListView, WorkerDetailView, WorkerCreateView, WorkerUpdateView, WorkerDeleteView, PositionListView, \
     PositionDetailView, PositionDeleteView, PositionCreateView, PositionUpdateView, TeamListView, TeamDetailView, \
     TeamDeleteView, TeamCreateView, TeamUpdateView, ProjectListView, ProjectDetailView, ProjectDeleteView, \
-    ProjectCreateView, ProjectUpdateView, project_toggle_completed
+    ProjectCreateView, ProjectUpdateView, project_toggle_completed, task_assign
 
 urlpatterns = [
     path("", index, name="index"),
@@ -17,6 +17,7 @@ urlpatterns = [
     path("tasks/<int:pk>/update/", TaskUpdateView.as_view(), name="task-update"),
     path("tasks/<int:pk>/delete/", TaskDeleteView.as_view(), name="task-delete"),
     path("tasks/<int:pk>/completed/", toggle_completed, name="toggle-completed"),
+    path("tasks/<int:pk>/assign/",  task_assign, name="task-assign"),
 
     # TaskType
     path("task-types/", TaskTypeListView.as_view(), name="task-type-list"),

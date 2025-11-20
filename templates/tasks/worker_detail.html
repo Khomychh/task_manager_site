@@ -3,7 +3,7 @@
 
 {% block title %}
   <title>
-    {{ worker.full_name }}
+    {{ worker }}
   </title>
 {% endblock %}
 
@@ -43,7 +43,7 @@
               </li>
               <li class="list-group-item border-0 ps-0 text-sm"><strong class="text-dark">Email:</strong> &nbsp; {{ worker.email }}</li>
               <li class="list-group-item border-0 ps-0 text-sm">
-                <a href="{% url 'tasks:position-detail' pk=worker.position_id %}" class="text-reset text-decoration-none">
+                <a href="{{ worker.position.get_absolute_url }}" class="text-reset text-decoration-none">
                   <strong class="text-dark">Position:</strong> &nbsp; {{ worker.position }}
                 </a>
               </li>
@@ -72,67 +72,12 @@
         </div>
       </div>
 
-      {# block projects #}
       <div class="col-12 col-xl-8">
+        {# Teams #}
         <div class="row mt-3">
           <div class="col-12">
             <div class="position-relative border-radius-xl overflow-hidden shadow-lg">
 
-              {# Project #}
-              <div class="container">
-                <div class="row justify-space-between py-2">
-                  <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
-                    <p class="lead text-dark pt-1 mb-0">Project leader</p>
-                  </div>
-                </div>
-              </div>
-
-              {# Content #}
-              <div class="tab-content tab-space">
-                <div class="tab-pane active" id="preview-typo">
-                  <div class="position-relative p-4">
-                    {% if projects %}
-                      <div class="table-responsive p-0">
-                        <table class="table align-items-center mb-0">
-                          <thead>
-                            <tr>
-                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for project in projects %}
-                              <tr>
-                                <td>
-                                  <a href="#" class="text-reset text-decoration-none">
-                                    <div class="d-flex px-2 py-1">
-                                      <div>
-                                        <img src="{% static "img/project.png " %}" class="avatar avatar-sm me-3" alt="user1">
-                                      </div>
-                                      <div class="d-flex flex-column justify-content-center">
-                                        <h6 class="mb-0 text-sm">{{ project.name }}</h6>
-                                      </div>
-                                    </div>
-                                  </a>
-                                </td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    {% else %}
-                      Not a leader of any project.
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-12">
-            <div class="position-relative border-radius-xl overflow-hidden shadow-lg">
-
-              {# Project #}
               <div class="container">
                 <div class="row justify-space-between py-2">
                   <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
@@ -157,7 +102,7 @@
                             {% for team in teams %}
                               <tr>
                                 <td>
-                                  <a href="#" class="text-reset text-decoration-none">
+                                  <a href="{{ team.get_absolute_url }}" class="text-reset text-decoration-none">
                                     <div class="d-flex px-2 py-1">
                                       <div>
                                         <img src="{% static "img/team-black.png " %}" class="avatar avatar-sm me-3">
@@ -182,6 +127,63 @@
             </div>
           </div>
         </div>
+        {# Projects #}
+        <div class="row mt-3">
+          <div class="col-12">
+            <div class="position-relative border-radius-xl overflow-hidden shadow-lg">
+
+              <div class="container">
+                <div class="row justify-space-between py-2">
+                  <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
+                    <p class="lead text-dark pt-1 mb-0">Projects</p>
+                  </div>
+                </div>
+              </div>
+
+              {# Content #}
+              <div class="tab-content tab-space">
+                <div class="tab-pane active" id="preview-typo">
+                  <div class="position-relative p-4">
+                    {% if projects %}
+                      <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                          <thead>
+                            <tr>
+                              <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for project in projects %}
+                              <tr>
+                                <td>
+                                  <a href="{{ project.get_absolute_url }}" class="text-reset text-decoration-none">
+                                    <div class="d-flex px-2 py-1">
+                                      <div>
+                                        <img src="{% static "img/project.png " %}" class="avatar avatar-sm me-3">
+                                      </div>
+                                      <div class="d-flex flex-column justify-content-center">
+                                        <a href="{{ project.get_absolute_url }}" class="text-reset text-decoration-none">
+                                          <h6 class="mb-0 text-sm">{{ project.name }}</h6>
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </a>
+                                </td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    {% else %}
+                      No projects.
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {# Tasks #}
         <div class="row mt-3">
           <div class="col-12">
             <div class="position-relative border-radius-xl overflow-hidden shadow-lg mb-0">

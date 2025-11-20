@@ -65,10 +65,14 @@
                 </a>
               </li>
             </ul>
-
-            {# Assigness #}
+            <hr class="horizontal gray-light my-2">
+            <div class="d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-2">Assignees:</h5>
+              <a href="{% url 'tasks:task-assign' pk=task.id %}" class="text-reset text-decoration-none">
+                <span class="text-primary">Assign</span>
+              </a>
+            </div>
             {% if assignees %}
-              <h5 class="card-title mb-2">Assigness:</h5>
               <ul class="list-unstyled mb-0">
                 {% for worker in assignees %}
                   <li class="d-flex align-items-center mb-2">
@@ -82,7 +86,6 @@
                 {% endfor %}
               </ul>
             {% else %}
-              <h5 class="card-title mb-2">Assigness:</h5>
               <div class="d-inline-block">
                 <i class="icon-user"></i>
                 <span class="bg-primary-subtle text-dark">No workers</span>

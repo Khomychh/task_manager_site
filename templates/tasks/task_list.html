@@ -168,7 +168,9 @@
                         <td>
                           <p class="text-xs font-weight-bold mb-0">
                             {% if task.project %}
-                              {{ task.project }}
+                              <a href="{% url 'tasks:project-detail' pk=task.project.id %}" class="text-reset text-decoration-none">
+                                {{ task.project }}
+                              </a>
                             {% else %}
                               Not part of the project
                             {% endif %}

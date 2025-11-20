@@ -1,12 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect
+from django.db.models import Q
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import generic
 
 from tasks.forms import TaskSearchForm, TaskCreateForm, TaskUpdateForm, TaskTypeCreateForm, TaskTypeSearchForm, \
     WorkerSearchForm, WorkerCreationForm, TaskTypeUpdateForm, WorkerUpdateForm, PositionSearchForm, PositionCreateForm, \
-    TeamSearchForm, TeamCreateForm, TeamUpdateForm, ProjectSearchForm, ProjectCreateForm, ProjectUpdateForm
+    TeamSearchForm, TeamCreateForm, TeamUpdateForm, ProjectSearchForm, ProjectCreateForm, ProjectUpdateForm, TaskAssignForm
 from tasks.models import Task, Worker, Project, TaskType, Position, Team
 
 @login_required
@@ -103,6 +104,50 @@ def toggle_completed(request, pk: int):
     return redirect(next_url)
 
 
+@login_required
+def task_assign(request, pk: int):
+    task = get_object_or_404(Task, pk=pk)
+
+    # якщо у завдання є проект, то беремо працівників з команди проекту
+    # інакше показуємо всіх працівників
+    if task.project:
+        if task.project.team_id and task.project.leader_id:
+            team = task.project.team
+            assignees_qs = Worker.objects.filter(
+                Q(teams=team) | Q(pk=task.project.leader_id)
+            ).distinct()
+        elif task.project.leader_id:
+            assignees_qs = Worker.objects.filter(
+                Q(pk=task.project.leader_id)
+            )
+        elif task.project.team_id:
+            team = task.project.team
+            assignees_qs = Worker.objects.filter(
+                Q(teams=team)
+            )
+    else:
+        assignees_qs = Worker.objects.all()
+
+    if request.method == "POST":
+        form = TaskAssignForm(request.POST, instance=task, assignees_queryset=assignees_qs)
+        if form.is_valid():
+            form.save()
+            return redirect(task.get_absolute_url())
+    else:
+        form = TaskAssignForm(instance=task, assignees_queryset=assignees_qs)
+
+    return render(request, "tasks/task_assign.html", {"form": form, "task": task})
+
+# @login_required()
+# def task_take(request, pk: int):
+#     task = get_object_or_404(Task, pk=pk)
+#     worker = Worker.objects.get(id=request.user.id)
+#     if task.assignees.filter(id=worker.id).exists():
+#         return redirect(task.get_absolute_url())
+#     else:
+#         task.assignees.add(worker)
+#         return redirect(task.get_absolute_url())
+
 class TaskTypeListView(LoginRequiredMixin, generic.ListView):
     model = TaskType
     template_name = "tasks/task_type_list.html"
@@ -181,19 +226,19 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
 
 class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
     model = Worker
-    queryset = Worker.objects.all().select_related("position")
+    queryset = Worker.objects.all().select_related("position").prefetch_related("projects", "tasks", "teams")
 
     def get_context_data(self, **kwargs):
         context = super(WorkerDetailView, self).get_context_data(**kwargs)
-        projects = self.object.projects.all()
         tasks = self.object.tasks.all()
         teams = self.object.teams.all()
-        if projects:
-            context["projects"] = projects
+        projects = self.object.projects.all()
         if tasks:
             context["tasks"] = tasks
         if teams:
             context["teams"] = teams
+        if projects:
+            context["projects"] = projects
         return context
 
 
@@ -330,7 +375,7 @@ class ProjectListView(LoginRequiredMixin, generic.ListView):
         return context
 
     def get_queryset(self):
-        queryset = Project.objects.all().select_related("leader")
+        queryset = Project.objects.all()
         name = self.request.GET.get("name", "")
         if name:
             queryset = queryset.filter(name__icontains=name)
@@ -342,15 +387,13 @@ class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
     context_object_name = "project"
 
     def get_queryset(self):
-        return Project.objects.all().select_related("leader").prefetch_related("tasks", "teams")
+        return Project.objects.all().select_related("team").prefetch_related("tasks",)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             "has_tasks": self.object.tasks.exists(),
             "tasks": self.object.tasks.all(),
-            "has_teams": self.object.teams.exists(),
-            "teams": self.object.teams.all(),
         })
         return context
 

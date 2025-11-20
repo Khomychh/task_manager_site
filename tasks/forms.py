@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.db.models import Q
 
 from tasks.models import Task, TaskType, Worker, Position, Team, Project
 
@@ -26,7 +27,6 @@ class TaskCreateForm(forms.ModelForm):
             "type",
             "project",
             "description",
-            "assignees",
         )
         labels = {"name": "", "description": "",}
         widgets = {
@@ -38,8 +38,25 @@ class TaskCreateForm(forms.ModelForm):
                 format="%Y-%m-%dT%H:%M",
             ),
             "description": forms.Textarea(attrs={"placeholder": "Description"}),
-            "assignees": forms.CheckboxSelectMultiple,
         }
+
+# Python
+class TaskAssignForm(forms.ModelForm):
+    assignees = forms.ModelMultipleChoiceField(
+        queryset=Worker.objects.none(),
+        label="Assignees:",
+        widget=forms.CheckboxSelectMultiple(),
+        required=False,
+    )
+
+    class Meta:
+        model = Task
+        fields = ("assignees",)
+
+    def __init__(self, *args, **kwargs):
+        queryset = kwargs.pop("assignees_queryset", None)
+        super().__init__(*args, **kwargs)
+        self.fields["assignees"].queryset = queryset if queryset is not None else Worker.objects.all()
 
 
 class TaskUpdateForm(forms.ModelForm):
@@ -190,22 +207,20 @@ class TeamSearchForm(forms.Form):
 class TeamCreateForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ("name", "workers", "projects")
+        fields = ("name", "workers", "leader")
         labels = {"name": "",}
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "workers": forms.CheckboxSelectMultiple(),
-            "projects": forms.CheckboxSelectMultiple(),
         }
 
 
 class TeamUpdateForm(forms.ModelForm):
     class Meta:
         model = Team
-        fields = ("name", "workers", "projects")
+        fields = ("name", "workers", "leader")
         widgets = {
             "workers": forms.CheckboxSelectMultiple(),
-            "projects": forms.CheckboxSelectMultiple(),
         }
 
 
@@ -223,31 +238,29 @@ class ProjectSearchForm(forms.Form):
 class ProjectCreateForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ("name", "description", "deadline", "leader")
+        fields = ("name", "description", "deadline", "leader", "team")
         labels = {"name": "", "description": "",}
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "description": forms.Textarea(attrs={"placeholder": "Description"}),
-            "deadline": forms.DateTimeInput(
+            "deadline": forms.DateInput(
                 attrs={
-                    "type": "datetime-local",
+                    "type": "date",
                 },
-                format="%Y-%m-%dT%H:%M",
+                format="%Y-%m-%d",
             ),
-            "leader": forms.Select(),
         }
 
 
 class ProjectUpdateForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ("name", "description", "deadline", "is_completed", "leader")
+        fields = ("name", "description", "deadline", "is_completed", "leader", "team")
         widgets = {
-            "deadline": forms.DateTimeInput(
+            "deadline": forms.DateInput(
                 attrs={
-                    "type": "datetime-local",
+                    "type": "date",
                 },
-                format="%Y-%m-%dT%H:%M",
+                format="%Y-%m-%d",
             ),
-            "leader": forms.Select(),
         }

@@ -28,7 +28,7 @@
                 This project has no description.
               {% endif %}
             </p>
-            <hr class="horizontal gray-light my-4">
+            <hr class="horizontal gray-light my-2">
           </div>
           <div class="py-0 px-3">
             <ul class="list-unstyled mb-0">
@@ -36,44 +36,36 @@
               <li class="d-flex align-items-center mb-2">
                 <i class="icon-calendar me-2"></i>
                 <span class="badge text-dark border">
-                  {{ project.deadline|date:"M d, Y — H:i" }}
+                  {{ project.deadline|date:"M d, Y" }}
                 </span>
               </li>
-
-              {# Leader #}
-              <li class="d-flex align-items-center">
-                <a href="{{ project.leader.get_absolute_url }}" class="text-reset text-decoration-none">
-                  <span class="me-2">Leader:</span>
-                  <span class="badge bg-primary-subtle text-dark">
-                    {{ project.leader }}
-                  </span>
-                </a>
+              <li class="d-flex align-items-center mb-2">
+                <i class="icon-user me-2"></i>
+                <span>
+                  Leader:
+                  {% if project.leader %}
+                     {{ project.leader }}
+                  {% endif %}
+                </span>
               </li>
             </ul>
-            <hr class="horizontal gray-light my-4">
+            <hr class="horizontal gray-light my-2">
             {# Teams #}
-            {% if has_teams %}
-              <h5 class="card-title mb-2">Teams:</h5>
-              <ul class="list-unstyled mb-0">
-                {% for team in teams %}
-                  <li class="d-flex align-items-center mb-2">
-                    <a href="{{ team.get_absolute_url }}" class="text-reset text-decoration-none">
-                      <i class="icon-angle-double-right"></i>
-                      <span class="bg-primary-subtle text-dark">
-                        {{ team.name }}
-                      </span>
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
+            <h5 class="card-title mb-2">Team:</h5>
+            {% if project.team %}
+              <a href="{{ project.team.get_absolute_url }}" class="text-reset text-decoration-none">
+                <i class="icon-angle-double-right"></i>
+                <span class="bg-primary-subtle text-dark">
+                  {{ project.team.name }}
+                </span>
+              </a>
             {% else %}
-              <h5 class="card-title mb-2">Teams:</h5>
               <div class="d-inline-block">
                 <i class="icon-user"></i>
-                <span class="bg-primary-subtle text-dark">No teams</span>
+                <span class="bg-primary-subtle text-dark">No team</span>
               </div>
             {% endif %}
-            <hr class="horizontal gray-light my-4">
+            <hr class="horizontal gray-light my-2">
             <div class="card-body py-3 px-0">
               {# Кнопка зміни статусу завдання #}
               <div class="d-inline-block w-100">
@@ -118,25 +110,30 @@
                   <div class="col-lg-4 col-md-5 col-sm-6 me-auto">
                     <p class="lead text-dark pt-1 mb-0">Tasks</p>
                   </div>
+                  <a href="{% url 'tasks:task-create' %}"
+                     class="btn bg-gradient-secondary w-auto">
+                    Create a new task
+                  </a>
                 </div>
               </div>
 
               {# Content #}
               <div class="tab-content tab-space">
                 <div class="tab-pane active" id="preview-typo">
-                  <div class="position-relative p-4">
+                  <div class="position-relative p-4 pt-0">
                     {% if has_tasks %}
                       <div class="table-responsive p-0">
                         <table class="table align-items-center mb-0">
                           <thead>
                             <tr>
                               <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                              <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
                             </tr>
                           </thead>
                           <tbody>
                             {% for task in tasks %}
                               <tr>
-                                <td>
+                                <td class="align-middle">
                                   <a href="{{ task.get_absolute_url }}" class="text-reset text-decoration-none">
                                     <div class="d-flex px-2 py-1">
                                       <div>
@@ -147,6 +144,11 @@
                                       </div>
                                     </div>
                                   </a>
+                                </td>
+
+                                <td class="align-middle text-center text-primary">
+                                  <a href="{% url 'tasks:task-assign' pk=task.id %}"
+                                     class="text-reset text-decoration-none">Assign</a>
                                 </td>
                               </tr>
                             {% endfor %}
