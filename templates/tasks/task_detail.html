@@ -15,7 +15,18 @@
           <div class="card-body card border-0 shadow-sm overflow-hidden">
 
             {# Name #}
-            <h3 class="card-title mb-2">{{ task.name }}</h3>
+            <div class="d-flex justify-content-between align-items-center">
+              <h3 class="card-title mb-2">{{ task.name }}</h3>
+              {% if user not in assignees %}
+                <a href="{% url 'tasks:task-take' pk=task.id %}" class="text-reset text-decoration-none">
+                  <span class="text-primary">Take task</span>
+                </a>
+              {% else %}
+                <a href="{% url 'tasks:task-remove-from-me' pk=task.id %}" class="text-reset text-decoration-none">
+                  <span class="text-primary">Remove from me</span>
+                </a>
+              {% endif %}
+            </div>
 
             <ul class="list-unstyled mb-0">
 

@@ -138,15 +138,21 @@ def task_assign(request, pk: int):
 
     return render(request, "tasks/task_assign.html", {"form": form, "task": task})
 
-# @login_required()
-# def task_take(request, pk: int):
-#     task = get_object_or_404(Task, pk=pk)
-#     worker = Worker.objects.get(id=request.user.id)
-#     if task.assignees.filter(id=worker.id).exists():
-#         return redirect(task.get_absolute_url())
-#     else:
-#         task.assignees.add(worker)
-#         return redirect(task.get_absolute_url())
+@login_required()
+def task_take(request, pk: int):
+    task = get_object_or_404(Task, pk=pk)
+    worker = Worker.objects.get(id=request.user.id)
+    if task.assignees.filter(id=worker.id).exists():
+        return redirect(task.get_absolute_url())
+    task.assignees.add(worker)
+    return redirect(task.get_absolute_url())
+
+def task_remove_from_me(request, pk: int):
+    task = get_object_or_404(Task, pk=pk)
+    worker = Worker.objects.get(id=request.user.id)
+    if task.assignees.filter(id=worker.id).exists():
+        task.assignees.remove(worker)
+    return redirect(task.get_absolute_url())
 
 class TaskTypeListView(LoginRequiredMixin, generic.ListView):
     model = TaskType
