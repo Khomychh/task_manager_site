@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Worker(AbstractUser):
@@ -32,8 +34,8 @@ class Worker(AbstractUser):
         return self.username
 
     def create_full_name(self):
-        parts = [self.last_name, self.first_name]
-        cleaned = [p.strip() for p in parts]
+        parts = [self.last_name or "", self.first_name or ""]
+        cleaned = [p.strip() for p in parts if p and p.strip()]
         return " ".join(cleaned)
 
     def save(self, *args, **kwargs):
@@ -85,18 +87,34 @@ class Task(models.Model):
                 name="unique_task_name_per_project",
             ),
         ]
+        indexes = [
+            models.Index(fields=["project", "deadline"]),
+            models.Index(fields=["is_completed"]),
+        ]
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.deadline and self.deadline < timezone.now():
+            raise ValidationError("Deadline cannot be in the past.")
+        if self.project and self.deadline and hasattr(self.project, "deadline"):
+            if self.deadline > self.project.deadline:
+                raise ValidationError(
+                    "Deadline cannot be later than project deadline."
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("tasks:task-detail", kwargs={"pk": self.pk})
 
 
 class TaskType(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, default="")
-    # можна добавити зображення для типу завдання
 
     class Meta:
         ordering = ["name"]
@@ -111,7 +129,7 @@ class TaskType(models.Model):
 class Position(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(
-        blank=True, default="This position has no description."
+        blank=True, default=""
     )
 
     class Meta:
@@ -129,7 +147,7 @@ class Team(models.Model):
     Команда не працює над окремими завданнями,
     але працює над проєктамм
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     leader = models.ForeignKey(
         "Worker",
         on_delete=models.SET_NULL,
@@ -154,7 +172,7 @@ class Team(models.Model):
 
 
 class Project(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     description = models.TextField(
         blank=True, default=""
     )
@@ -173,7 +191,6 @@ class Project(models.Model):
         blank=True,
     )
 
-    # дедлайни завдань, які належать до даного проекту не можуть пізніше дедлайну проекту
     deadline = models.DateField()
     is_completed = models.BooleanField(default=False)
 
@@ -182,6 +199,19 @@ class Project(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.deadline and self.deadline < timezone.now():
+            raise ValidationError("Deadline cannot be in the past.")
+        if self.is_completed:
+            if self.tasks.filter(is_completed=False).exists():
+                raise ValidationError(
+                    "Cannot complete project with uncompleted tasks."
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("tasks:project-detail", kwargs={"pk": self.pk})
