@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -10,9 +12,7 @@ class TaskSearchForm(forms.Form):
         max_length=100,
         required=False,
         label="",
-        widget=forms.TextInput(
-            attrs={"placeholder": "Name"}
-        )
+        widget=forms.TextInput(attrs={"placeholder": "Name"}),
     )
 
 
@@ -27,7 +27,10 @@ class TaskCreateForm(forms.ModelForm):
             "project",
             "description",
         )
-        labels = {"name": "", "description": "",}
+        labels = {
+            "name": "",
+            "description": "",
+        }
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "deadline": forms.DateTimeInput(
@@ -36,8 +39,11 @@ class TaskCreateForm(forms.ModelForm):
                 },
                 format="%Y-%m-%dT%H:%M",
             ),
-            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Description"}
+            ),
         }
+
 
 # Python
 class TaskAssignForm(forms.ModelForm):
@@ -52,10 +58,16 @@ class TaskAssignForm(forms.ModelForm):
         model = Task
         fields = ("assignees",)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+            self: "TaskAssignForm",
+            *args: Any,
+            **kwargs: dict[str, Any]
+    ) -> None:
         queryset = kwargs.pop("assignees_queryset", None)
         super().__init__(*args, **kwargs)
-        self.fields["assignees"].queryset = queryset if queryset is not None else Worker.objects.all()
+        self.fields["assignees"].queryset = (
+            queryset if queryset is not None else Worker.objects.all()
+        )
 
 
 class TaskUpdateForm(forms.ModelForm):
@@ -71,7 +83,10 @@ class TaskUpdateForm(forms.ModelForm):
             "description",
             "assignees",
         )
-        labels = {"name": "", "description": "",}
+        labels = {
+            "name": "",
+            "description": "",
+        }
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "deadline": forms.DateTimeInput(
@@ -80,7 +95,9 @@ class TaskUpdateForm(forms.ModelForm):
                 },
                 format="%Y-%m-%dT%H:%M",
             ),
-            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Description"}
+            ),
             "assignees": forms.CheckboxSelectMultiple,
         }
 
@@ -90,9 +107,7 @@ class TaskTypeSearchForm(forms.Form):
         max_length=100,
         required=False,
         label="",
-        widget=forms.TextInput(
-            attrs={"placeholder": "Name"}
-        )
+        widget=forms.TextInput(attrs={"placeholder": "Name"}),
     )
 
 
@@ -102,8 +117,12 @@ class TaskTypeCreateForm(forms.ModelForm):
         fields = ("name", "description")
         labels = {"name": "", "description": ""}
         widgets = {
-            "name": forms.TextInput(attrs={"placeholder": "Name*"}),
-            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "name": forms.TextInput(
+                attrs={"placeholder": "Name*"}
+            ),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Description"}
+            ),
         }
 
 
@@ -113,8 +132,12 @@ class TaskTypeUpdateForm(forms.ModelForm):
         fields = ("name", "description")
         labels = {"name": "", "description": ""}
         widgets = {
-            "name": forms.TextInput(attrs={"placeholder": "Name*"}),
-            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "name": forms.TextInput(
+                attrs={"placeholder": "Name*"}
+            ),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Description"}
+            ),
         }
 
 
@@ -123,9 +146,7 @@ class WorkerSearchForm(forms.Form):
         max_length=150,
         required=False,
         label="",
-        widget=forms.TextInput(
-            attrs={"placeholder": "Full name"}
-        )
+        widget=forms.TextInput(attrs={"placeholder": "Full name"}),
     )
 
 
@@ -144,14 +165,24 @@ class WorkerCreationForm(UserCreationForm):
             "first_name": "",
             "last_name": "",
             "email": "",
-            "biography": ""
+            "biography": "",
         }
         widgets = {
-            "username": forms.TextInput(attrs={"placeholder": "Username*"}),
-            "last_name": forms.TextInput(attrs={"placeholder": "Last name*"}),
-            "first_name": forms.TextInput(attrs={"placeholder": "First name*"}),
-            "email": forms.TextInput(attrs={"placeholder": "Email"}),
-            "biography": forms.Textarea(attrs={"placeholder": "Biography"}),
+            "username": forms.TextInput(
+                attrs={"placeholder": "Username*"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"placeholder": "Last name*"}
+            ),
+            "first_name": forms.TextInput(
+                attrs={"placeholder": "First name*"}
+            ),
+            "email": forms.TextInput(
+                attrs={"placeholder": "Email"}
+            ),
+            "biography": forms.Textarea(
+                attrs={"placeholder": "Biography"}
+            ),
         }
 
 
@@ -175,9 +206,7 @@ class PositionSearchForm(forms.Form):
         max_length=100,
         required=False,
         label="",
-        widget=forms.TextInput(
-            attrs={"placeholder": "Name"}
-        )
+        widget=forms.TextInput(attrs={"placeholder": "Name"}),
     )
 
 
@@ -188,7 +217,9 @@ class PositionCreateForm(forms.ModelForm):
         labels = {"name": "", "description": ""}
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
-            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Description"}
+            ),
         }
 
 
@@ -197,9 +228,7 @@ class TeamSearchForm(forms.Form):
         max_length=100,
         required=False,
         label="",
-        widget=forms.TextInput(
-            attrs={"placeholder": "Name"}
-        )
+        widget=forms.TextInput(attrs={"placeholder": "Name"}),
     )
 
 
@@ -207,7 +236,9 @@ class TeamCreateForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ("name", "workers", "leader")
-        labels = {"name": "",}
+        labels = {
+            "name": "",
+        }
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
             "workers": forms.CheckboxSelectMultiple(),
@@ -228,9 +259,7 @@ class ProjectSearchForm(forms.Form):
         max_length=100,
         required=False,
         label="",
-        widget=forms.TextInput(
-            attrs={"placeholder": "Name"}
-        )
+        widget=forms.TextInput(attrs={"placeholder": "Name"}),
     )
 
 
@@ -238,10 +267,15 @@ class ProjectCreateForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ("name", "description", "deadline", "leader", "team")
-        labels = {"name": "", "description": "",}
+        labels = {
+            "name": "",
+            "description": "",
+        }
         widgets = {
             "name": forms.TextInput(attrs={"placeholder": "Name*"}),
-            "description": forms.Textarea(attrs={"placeholder": "Description"}),
+            "description": forms.Textarea(
+                attrs={"placeholder": "Description"}
+            ),
             "deadline": forms.DateInput(
                 attrs={
                     "type": "date",
@@ -254,7 +288,14 @@ class ProjectCreateForm(forms.ModelForm):
 class ProjectUpdateForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ("name", "description", "deadline", "is_completed", "leader", "team")
+        fields = (
+            "name",
+            "description",
+            "deadline",
+            "is_completed",
+            "leader",
+            "team"
+        )
         widgets = {
             "deadline": forms.DateInput(
                 attrs={

@@ -1,14 +1,17 @@
+from typing import Any
+
 from django import template
+from django.http import HttpRequest
 
 register = template.Library()
 
 
 @register.simple_tag
-def query_transform(request, **kwargs):
+def query_transform(request: HttpRequest, **kwargs: dict[str, Any]) -> str:
     updated = request.GET.copy()
-    for k, v in kwargs.items():
-        if v is not None:
-            updated[k] = v
+    for key, value in kwargs.items():
+        if value is not None:
+            updated[key] = value
         else:
-            updated.pop(k, 0)
+            updated.pop(key, 0)
     return updated.urlencode()

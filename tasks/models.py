@@ -85,7 +85,8 @@ class Task(models.Model):
             models.UniqueConstraint(
                 fields=["name", "project"],
                 name="unique_task_name_per_project",
-                violation_error_message="Task with this name already exists in this project.",
+                violation_error_message="Task with this name"
+                                        " already exists in this project.",
             ),
         ]
         indexes = [
@@ -99,7 +100,9 @@ class Task(models.Model):
     def clean(self):
         if self.deadline and self.deadline < timezone.now():
             raise ValidationError("Deadline cannot be in the past.")
-        if self.project and self.deadline and hasattr(self.project, "deadline"):
+        if (self.project
+                and self.deadline
+                and hasattr(self.project, "deadline")):
             if self.deadline.date() > self.project.deadline:
                 raise ValidationError(
                     "Deadline cannot be later than project deadline."
@@ -129,9 +132,7 @@ class TaskType(models.Model):
 
 class Position(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(
-        blank=True, default=""
-    )
+    description = models.TextField(blank=True, default="")
 
     class Meta:
         ordering = ["name"]
@@ -148,6 +149,7 @@ class Team(models.Model):
     Команда не працює над окремими завданнями,
     але працює над проєктамм
     """
+
     name = models.CharField(max_length=100, unique=True)
     leader = models.ForeignKey(
         "Worker",
@@ -174,9 +176,7 @@ class Team(models.Model):
 
 class Project(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField(
-        blank=True, default=""
-    )
+    description = models.TextField(blank=True, default="")
     leader = models.ForeignKey(
         "Worker",
         on_delete=models.SET_NULL,
