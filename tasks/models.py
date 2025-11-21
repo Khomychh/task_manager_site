@@ -85,6 +85,7 @@ class Task(models.Model):
             models.UniqueConstraint(
                 fields=["name", "project"],
                 name="unique_task_name_per_project",
+                violation_error_message="Task with this name already exists in this project.",
             ),
         ]
         indexes = [
@@ -99,7 +100,7 @@ class Task(models.Model):
         if self.deadline and self.deadline < timezone.now():
             raise ValidationError("Deadline cannot be in the past.")
         if self.project and self.deadline and hasattr(self.project, "deadline"):
-            if self.deadline > self.project.deadline:
+            if self.deadline.date() > self.project.deadline:
                 raise ValidationError(
                     "Deadline cannot be later than project deadline."
                 )
