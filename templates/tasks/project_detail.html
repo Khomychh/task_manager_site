@@ -10,7 +10,16 @@
 {% block content %}
   <section class="my-5 pt-5">
   <div class="container">
-    <div class="row pt-lg-6">
+    {% if messages %}
+      <div class="container p-0 m-0 bg-danger border-radius-xl">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} text-white" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="row">
       <div class="col-12 col-xl-4 mt-3">
         <div class="card sticky-top" style="top: 90px; z-index: 0">
           <div class="card-header pb-0 p-3">

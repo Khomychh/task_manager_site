@@ -1,5 +1,7 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
@@ -476,8 +478,15 @@ def project_toggle_completed(request, pk: int):
         if project.is_completed:
             project.is_completed = False
         else:
-            project.is_completed = True
-        project.save()
+            try:
+                project.is_completed = True
+                project.save()
+            except ValidationError:
+                messages.error(
+                    request,
+                    "Cannot complete project with uncompleted tasks."
+                )
+                return redirect(project.get_absolute_url())
     next_url = request.POST.get("next") or request.GET.get("next")
     if not next_url:
         next_url = request.META.get("HTTP_REFERER")
