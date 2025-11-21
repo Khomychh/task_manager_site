@@ -202,7 +202,7 @@ class Project(models.Model):
         return self.name
 
     def clean(self):
-        if self.deadline and self.deadline < timezone.now():
+        if self.deadline and self.deadline < timezone.localdate():
             raise ValidationError("Deadline cannot be in the past.")
         if self.is_completed:
             if self.tasks.filter(is_completed=False).exists():
