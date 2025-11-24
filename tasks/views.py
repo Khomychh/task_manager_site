@@ -254,7 +254,7 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         queryset = Worker.objects.all().select_related("position")
         full_name = self.request.GET.get("full_name", "")
         if full_name:
-            queryset = queryset.filter(name__icontains=full_name)
+            queryset = queryset.filter(full_name__icontains=full_name)
         return queryset
 
 
