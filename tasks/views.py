@@ -175,7 +175,7 @@ def task_take(request, pk: int):
     task.assignees.add(worker)
     return redirect(task.get_absolute_url())
 
-
+@login_required()
 def task_remove_from_me(request, pk: int):
     task = get_object_or_404(Task, pk=pk)
     worker = Worker.objects.get(id=request.user.id)
