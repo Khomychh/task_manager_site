@@ -61,7 +61,7 @@ urlpatterns = [
         name="toggle-completed"
     ),
     path("tasks/<int:pk>/assign/", task_assign, name="task-assign"),
-    path("tasks/<int:pk>/take", task_take, name="task-take"),
+    path("tasks/<int:pk>/take/", task_take, name="task-take"),
     path(
         "tasks/<int:pk>/remove-from-me/",
         task_remove_from_me,
