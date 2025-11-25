@@ -64,6 +64,9 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         if name:
             queryset = queryset.filter(name__icontains=name)
 
+        if self.request.GET.get("my") == "1":
+            queryset = queryset.filter(assignees__in=[self.request.user])
+
         status = self.request.GET.get("status", None)
         if status == "completed":
             queryset = queryset.filter(is_completed=True)
