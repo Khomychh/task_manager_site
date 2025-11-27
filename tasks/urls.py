@@ -75,12 +75,12 @@ urlpatterns = [
         name="task-type-detail"
     ),
     path(
-        "tasks-types/create/",
+        "task-types/create/",
         TaskTypeCreateView.as_view(),
         name="task-type-create"
     ),
     path(
-        "tasks-types/<int:pk>/update/",
+        "task-types/<int:pk>/update/",
         TaskTypeUpdateView.as_view(),
         name="task-type-update",
     ),
