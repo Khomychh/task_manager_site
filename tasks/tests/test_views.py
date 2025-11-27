@@ -108,12 +108,52 @@ class PrivateWorkerTest(TestCase):
     def test_retrieve_create_worker(self):
         response = self.client.get(WORKER_URL + "create/")
         self.assertEqual(response.status_code, 200)
-        self.assertIn("form", response.context)
+
+    def test_create_worker(self):
+        position = Position.objects.create(name="Test Position")
+        form_data = {
+            "username": "test_worker",
+            "last_name": "Testowicz",
+            "first_name": "Test",
+            "email": "test@test.com",
+            "position": position.id,
+            "biography": "Testowy biografia",
+            "password1": "Password123!",
+            "password2": "Password123!"
+        }
+        self.client.post(WORKER_URL + "create/", data=form_data)
+        new_worker = get_user_model().objects.get(username=form_data["username"])
+
+        self.assertEqual(new_worker.username, form_data["username"])
+        self.assertEqual(new_worker.last_name, form_data["last_name"])
+        self.assertEqual(new_worker.first_name, form_data["first_name"])
+        self.assertEqual(new_worker.email, form_data["email"])
+        self.assertEqual(new_worker.position, position)
+        self.assertEqual(new_worker.biography, form_data["biography"])
 
     def test_retrieve_update_worker(self):
         response = self.client.get(WORKER_URL + f"{self.user.id}/update/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_update_worker(self):
+        position = Position.objects.create(name="Test position")
+        form_data = {
+            "username": self.user.username,
+            "last_name": "Testowicz",
+            "first_name": "Test",
+            "email": "test@test.com",
+            "position": position.id,
+            "biography": "Testowy biografia"
+        }
+        self.client.post(WORKER_URL + f"{self.user.id}/update/", data=form_data)
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.username, form_data["username"])
+        self.assertEqual(self.user.last_name, form_data["last_name"])
+        self.assertEqual(self.user.first_name, form_data["first_name"])
+        self.assertEqual(self.user.email, form_data["email"])
+        self.assertEqual(self.user.position, position)
+        self.assertEqual(self.user.biography, form_data["biography"])
 
     def test_retrieve_delete_worker(self):
         response = self.client.get(WORKER_URL + f"{self.user.id}/delete/")
@@ -261,6 +301,32 @@ class PrivateTaskTest(TestCase):
         response = self.client.get(TASK_URL + "create/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_create_task(self):
+        deadline = timezone.now() + timezone.timedelta(days=10)
+        project = Project.objects.create(
+            name="Test Project",
+            deadline=deadline,
+        )
+        form_data = {
+            "name": "Test Task 2",
+            "priority": Task.Priority.LOW.value,
+            "deadline": self.deadline.isoformat(),
+            "type": self.task_type.id,
+            "project": project.id,
+            "description": "Test Description"
+        }
+        response = self.client.post(TASK_URL + "create/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        new_task = Task.objects.get(
+            name=form_data["name"],
+            deadline=self.deadline,
+            type=self.task_type,
+        )
+        self.assertEqual(new_task.priority, Task.Priority.LOW)
+        self.assertEqual(new_task.description, form_data["description"])
+        self.assertEqual(new_task.project, project)
+
         
     def test_task_create_success_url(self):
         response = self.client.post(
@@ -278,6 +344,38 @@ class PrivateTaskTest(TestCase):
         response = self.client.get(TASK_URL + f"{self.task.id}/update/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_update_task(self):
+        deadline = timezone.now() + timezone.timedelta(days=10)
+        project = Project.objects.create(
+            name="Test Project",
+            deadline=deadline,
+        )
+        task = Task.objects.create(
+            name="Test Tsks",
+            type=self.task_type,
+            deadline=self.deadline,
+        )
+        new_type = TaskType.objects.create(name="New Type")
+        form_data = {
+            "is_completed": True,
+            "name": "Test Task 2",
+            "priority": Task.Priority.LOW.value,
+            "deadline": deadline.isoformat(),
+            "type": new_type.id,
+            "project": project.id,
+            "description": "Test Description",
+            "assignees": [self.user.id]
+        }
+        response = self.client.post(TASK_URL + f"{task.id}/update/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        task.refresh_from_db()
+        self.assertEqual(task.name, form_data["name"])
+        self.assertEqual(task.priority, Task.Priority.LOW)
+        self.assertEqual(task.description, form_data["description"])
+        self.assertEqual(task.project, project)
+        self.assertEqual(task.type, new_type)
+        self.assertIn(self.user, task.assignees.all())
         
     def test_retrieve_delete_task(self):
         response = self.client.get(TASK_URL + f"{self.task.id}/delete/")
@@ -382,12 +480,31 @@ class PrivateTaskTypeTest(TestCase):
         self.assertIn("form", response.context)
         self.assertTemplateUsed(response, "tasks/task_type_form.html")
 
+    def test_create_task_type(self):
+        form_data = {"name": "New Type"}
+        response = self.client.post(TASK_TYPE_URL + "create/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        new_task_type = TaskType.objects.get(name=form_data["name"])
+        self.assertEqual(new_task_type.name, form_data["name"])
+
     def test_retrieve_update_task_type(self):
         url = TASK_TYPE_URL + f"{self.task_type.id}/update/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
         self.assertTemplateUsed(response, "tasks/task_type_form.html")
+
+    def test_update_task_type(self):
+        task_type = TaskType.objects.create(name="Test Type і")
+        form_data = {
+            "name": "New Type",
+            "description": "Test Description"
+        }
+        response = self.client.post(TASK_TYPE_URL + f"{task_type.id}/update/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        task_type.refresh_from_db()
+        self.assertEqual(task_type.name, form_data["name"])
+        self.assertEqual(task_type.description, form_data["description"])
 
     def test_retrieve_delete_task_type(self):
         url = TASK_TYPE_URL + f"{self.task_type.id}/delete/"
@@ -450,10 +567,17 @@ class PrivatePositionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tasks/position_detail.html")
 
-    def test_create_position(self):
+    def test_retrieve_create_position(self):
         response = self.client.get(POSITION_URL + "create/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_create_position(self):
+        form_data = {"name": "New Position"}
+        response = self.client.post(POSITION_URL + "create/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        new_position = Position.objects.get(name=form_data["name"])
+        self.assertEqual(new_position.name, form_data["name"])
 
     def test_create_position_success_url(self):
         response = self.client.post(
@@ -464,10 +588,24 @@ class PrivatePositionTest(TestCase):
         )
         self.assertRedirects(response, POSITION_URL)
 
-    def test_update_position(self):
+    def test_retrieve_update_position(self):
         response = self.client.get(POSITION_URL + f"{self.position.id}/update/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_update_position(self):
+        position = Position.objects.create(name="Test Position d")
+        response = self.client.post(
+            POSITION_URL + f"{position.id}/update/",
+            {
+                "name": "Test Position 2",
+                "description": "Test Description"
+            }
+        )
+        self.assertEqual(response.status_code, 302)
+        position.refresh_from_db()
+        self.assertEqual(position.name, "Test Position 2")
+        self.assertEqual(position.description, "Test Description")
 
     def test_update_position_success_url(self):
         response = self.client.post(
@@ -539,10 +677,29 @@ class PrivateTeamTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tasks/team_detail.html")
 
-    def test_create_team(self):
+    def test_retrieve_create_team(self):
         response = self.client.get(TEAM_URL + "create/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_create_team(self):
+        worker1 = get_user_model().objects.create_user(
+            username="worker1",
+            password="Password123!"
+        )
+        worker2 = get_user_model().objects.create_user(
+            username="worker2",
+            password="Password123!"
+        )
+        form_data = {
+            "name": "New Team",
+            "workers": [worker1.id, worker2.id],
+            "leader": self.user.id
+        }
+        response = self.client.post(TEAM_URL + "create/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        new_team = Team.objects.get(name=form_data["name"])
+        self.assertEqual(new_team.name, form_data["name"])
 
     def test_create_team_success_url(self):
         response = self.client.post(
@@ -553,10 +710,27 @@ class PrivateTeamTest(TestCase):
         )
         self.assertRedirects(response, TEAM_URL)
 
-    def test_update_team(self):
+    def test_retrieve_update_team(self):
         response = self.client.get(TEAM_URL + f"{self.team.id}/update/")
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
+
+    def test_update_team(self):
+        worker1 = get_user_model().objects.create_user(
+            username="worker1",
+            password="Password123!"
+        )
+        team = Team.objects.create(name="Test for new")
+        form_data = {
+            "name": "New Team",
+            "workers": [worker1.id],
+            "leader": self.user.id
+        }
+        response = self.client.post(TEAM_URL + f"{team.id}/update/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        team.refresh_from_db()
+        self.assertEqual(team.name, form_data["name"])
+        self.assertEqual(team.leader.id, form_data["leader"])
 
     def test_update_team_success_url(self):
         response = self.client.post(
@@ -663,6 +837,14 @@ class PrivateProjectTest(TestCase):
         self.assertIn("form", response.context)
         self.assertTemplateUsed(response, "tasks/project_form.html")
 
+    def test_create_project(self):
+        form_data = {"name": "New Project", "deadline": self.deadline.date().isoformat()}
+        response = self.client.post(PROJECT_URL + "create/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        new_project = Project.objects.get(name=form_data["name"])
+        self.assertEqual(new_project.name, form_data["name"])
+        self.assertEqual(new_project.deadline.isoformat(), form_data["deadline"])
+
     def test_create_project_success_url(self):
         response = self.client.post(
             PROJECT_URL + "create/",
@@ -679,6 +861,19 @@ class PrivateProjectTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
         self.assertTemplateUsed(response, "tasks/project_form.html")
+
+    def test_update_project(self):
+        olf_deadline = timezone.now().date() + timezone.timedelta(days=11)
+        project = Project.objects.create(
+            name="Test Project 2",
+            deadline=olf_deadline
+        )
+        form_data = {"name": "New Project", "deadline": self.deadline.date().isoformat()}
+        response = self.client.post(PROJECT_URL + f"{project.id}/update/", data=form_data)
+        self.assertEqual(response.status_code, 302)
+        project.refresh_from_db()
+        self.assertEqual(project.name, form_data["name"])
+        self.assertEqual(project.deadline.isoformat(), form_data["deadline"])
 
     def test_update_project_success_url(self):
         response = self.client.post(
