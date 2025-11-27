@@ -477,19 +477,19 @@ class ProjectDeleteView(LoginRequiredMixin, generic.DeleteView):
 @login_required
 def project_toggle_completed(request, pk: int):
     project = Project.objects.get(pk=pk)
-    if project:
-        if project.is_completed:
-            project.is_completed = False
-        else:
-            try:
-                project.is_completed = True
-                project.save()
-            except ValidationError:
-                messages.error(
-                    request,
-                    "Cannot complete project with uncompleted tasks."
-                )
-                return redirect(project.get_absolute_url())
+    if project.is_completed:
+        project.is_completed = False
+        project.save()
+    else:
+        try:
+            project.is_completed = True
+            project.save()
+        except ValidationError:
+            messages.error(
+                request,
+                "Cannot complete project with uncompleted tasks."
+            )
+            return redirect(project.get_absolute_url())
     next_url = request.POST.get("next") or request.GET.get("next")
     if not next_url:
         next_url = request.META.get("HTTP_REFERER")
