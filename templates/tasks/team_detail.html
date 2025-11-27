@@ -31,16 +31,23 @@
           </div>
           <hr class="horizontal dark my-2">
           <div class="card-body p-3 py-2">
-            <a href="{% url 'tasks:worker-detail' pk=team.leader.id %}"
-               class="text-reset text-decoration-none">
+            {% if team.leader %}
+              <a href="{% url 'tasks:worker-detail' pk=team.leader.id %}"
+                 class="text-reset text-decoration-none">
+                <i class="icon-user me-2"></i>
+                  <span>
+                    <b>Leader: </b>
+                    {% if team.leader %}
+                      {{ team.leader }}
+                    {% endif %}
+                  </span>
+              </a>
+            {% else %}
               <i class="icon-user me-2"></i>
-                <span>
-                  <b>Leader:</b>
-                  {% if team.leader %}
-                     {{ team.leader }}
-                  {% endif %}
-                </span>
-            </a>
+              <span>
+                <b>Leader: </b>
+              </span>
+            {% endif %}
             <h5 class="card-title mb-2">Workers:</h5>
             {% if workers %}
               <ul class="list-unstyled mb-0">

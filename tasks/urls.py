@@ -166,7 +166,7 @@ urlpatterns = [
         name="project-delete"
     ),
     path(
-        "project/<int:pk>/completed/",
+        "projects/<int:pk>/completed/",
         project_toggle_completed,
         name="project-toggle-completed",
     ),
