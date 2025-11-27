@@ -231,7 +231,9 @@ class TaskTypeUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = TaskType
     form_class = TaskTypeUpdateForm
     template_name = "tasks/task_type_form.html"
-    success_url = reverse_lazy("tasks:task-type-detail")
+
+    def get_success_url(self):
+        return reverse_lazy("tasks:task-type-detail", kwargs={"pk": self.object.pk})
 
 
 class TaskTypeDeleteView(LoginRequiredMixin, generic.DeleteView):
