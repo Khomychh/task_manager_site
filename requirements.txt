@@ -11,6 +11,7 @@ django-crispy-forms==2.4
 django-debug-toolbar==6.0.0
 django-select2==8.4.3
 docker==7.1.0
+gunicorn==23.0.0
 idna==3.11
 mypy_extensions==1.1.0
 packaging==25.0
