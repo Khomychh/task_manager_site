@@ -2,6 +2,11 @@
 
 Link to the site: https://task-manager-0ro2.onrender.com/
 
+Test user:
+
+    login: user
+    password: user12345
+
 ## Overview
 Task Manager Site is a Django web application for managing work across teams and projects. It provides full CRUD for:
 - Tasks and Task Types
