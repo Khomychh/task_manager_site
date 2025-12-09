@@ -26,11 +26,6 @@ pip install -r requirements.txt
 python manage.py runserver
 ```
 
-### Initial Configuration
-
-Some projects require initial configuration (e.g. access tokens or keys, `npm i`).
-This is the section where you would document those requirements.
-
 ## Features:
 - Authentication via Django's auth system (login/logout)
 - Search across lists (tasks, task types, workers, positions, teams, projects)
